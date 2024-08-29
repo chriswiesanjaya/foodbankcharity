@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Charity 1",
+    "location": "Clayton",
+    "date": "1 Sep 2024",
+    "donation": 20,
+    "volunteer": 3,
+    "rating": 5,
+    "totalRating": 3
+  },
+  {
+    "name": "Charity 2",
+    "location": "Brunswick",
+    "date": "10 Oct 2024",
+    "donation": 30,
+    "volunteer": 5,
+    "rating": 1,
+    "totalRating": 2
+  }
+]
