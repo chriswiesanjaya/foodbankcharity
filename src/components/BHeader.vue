@@ -33,14 +33,14 @@
           <router-link to="/about" class="nav-link" active-class="active">Events</router-link>
         </li>
 
-        <!-- About Navigation -->
-        <li class="nav-item">
-          <router-link to="/about" class="nav-link" active-class="active">About</router-link>
-        </li>
-
         <!-- Blog Navigation -->
         <li class="nav-item">
           <router-link to="/about" class="nav-link" active-class="active">Blog</router-link>
+        </li>
+
+        <!-- About Navigation -->
+        <li class="nav-item">
+          <router-link to="/about" class="nav-link" active-class="active">About Us</router-link>
         </li>
 
         <!-- Contact Us Navigation -->
