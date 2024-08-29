@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AboutView from '../views/AboutUsView.vue'
+import AboutUsView from '../views/AboutUsView.vue'
 import SignInView from '@/views/SignInView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 
@@ -9,18 +9,19 @@ const routes = [
     name: 'Home'
   },
   {
-    path: '/about',
-    name: 'About',
-    component: AboutView
+    path: '/aboutus',
+    name: 'AboutUs',
+    component: AboutUsView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/signin',
-    name: 'Signin',
+    name: 'SignIn',
     component: SignInView
   },
   {
     path: '/signup',
-    name: 'Signup',
+    name: 'SignUp',
     component: SignUpView
   }
 ]
@@ -33,7 +34,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated')
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next({ name: 'Login' })
+    next({ name: 'SignIn' })
   } else {
     next()
   }

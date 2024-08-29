@@ -13,39 +13,42 @@
       </div>
 
       <!-- Right Section -->
-      <!-- TODO: Change to logout button if signed in -->
       <div class="col text-end">
-        <router-link to="/signin" class="btn btn-primary">Sign In</router-link>
+        <router-link v-if="!isAuthenticated" to="/signin" class="btn btn-primary"
+          >Sign In</router-link
+        >
+        <button v-if="isAuthenticated" class="btn btn-secondary" @click="signOut">Sign Out</button>
       </div>
     </div>
 
     <!-- Navigation Header-->
-    <!-- TODO: hide if not signed in, and navigation -->
-    <header class="row nav-header py-3">
+    <!-- TODO: hide if not signed in. 
+     modify navigation -->
+    <header class="row nav-header py-3" v-if="isAuthenticated">
       <ul class="nav nav-pills justify-content-between">
         <!-- Profile Navigation -->
         <li class="nav-item">
-          <router-link to="/about" class="nav-link" active-class="active">Profile</router-link>
+          <router-link to="/aboutus" class="nav-link" active-class="active">Profile</router-link>
         </li>
 
         <!-- Events Navigation -->
         <li class="nav-item">
-          <router-link to="/about" class="nav-link" active-class="active">Events</router-link>
+          <router-link to="/aboutus" class="nav-link" active-class="active">Events</router-link>
         </li>
 
         <!-- Blog Navigation -->
         <li class="nav-item">
-          <router-link to="/about" class="nav-link" active-class="active">Blog</router-link>
+          <router-link to="/aboutus" class="nav-link" active-class="active">Blog</router-link>
         </li>
 
         <!-- About Navigation -->
         <li class="nav-item">
-          <router-link to="/about" class="nav-link" active-class="active">About Us</router-link>
+          <router-link to="/aboutus" class="nav-link" active-class="active">About Us</router-link>
         </li>
 
         <!-- Contact Us Navigation -->
         <li class="nav-item">
-          <router-link to="/about" class="nav-link" active-class="active">Contact Us</router-link>
+          <router-link to="/aboutus" class="nav-link" active-class="active">Contact Us</router-link>
         </li>
       </ul>
     </header>
@@ -56,16 +59,16 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-/* TODO: Authentication */
+/* TODO: check Authentication */
 
-// const isAuthenticated = ref(localStorage.getItem('isAuthenticated') === 'true')
-// const router = useRouter()
+const isAuthenticated = ref(localStorage.getItem('isAuthenticated') === 'true')
+const router = useRouter()
 
-// const signOut = () => {
-//   localStorage.removeItem('isAuthenticated')
-//   isAuthenticated.value = false
-//   router.push('/login')
-// }
+const signOut = () => {
+  localStorage.removeItem('isAuthenticated')
+  isAuthenticated.value = false
+  router.push('/login')
+}
 </script>
 
 <style scoped>
