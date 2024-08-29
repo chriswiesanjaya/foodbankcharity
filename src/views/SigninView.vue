@@ -2,19 +2,27 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
+        <!-- Sign In Form -->
         <h1 class="text-center">Sign In</h1>
         <form @submit.prevent="signIn">
+          <!-- Email -->
           <div class="row mb-3">
             <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control" id="email" v-model="email" required />
           </div>
+
+          <!-- Password -->
           <div class="row mb-3">
             <label for="password" class="form-label">Password</label>
             <input type="password" class="form-control" id="password" v-model="password" required />
           </div>
+
+          <!-- Sign In Button -->
           <div class="row mb-3">
             <button type="submit" class="btn btn-primary">Sign In</button>
           </div>
+
+          <!-- Sign Up Navigation -->
           <div class="text-center mb-3">
             Don't have an account?
             <router-link to="/signup" class="text-primary"> Sign up</router-link>

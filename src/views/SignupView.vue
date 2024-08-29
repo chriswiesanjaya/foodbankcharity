@@ -2,12 +2,16 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
+        <!-- Sign Up Form -->
         <h1 class="text-center">Sign Up</h1>
         <form @submit.prevent="signUp">
+          <!-- Email -->
           <div class="row mb-3">
             <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control" id="email" v-model="formData.email" required />
           </div>
+
+          <!-- Password -->
           <div class="row mb-3">
             <label for="password" class="form-label">Password</label>
             <input
@@ -21,6 +25,8 @@
             />
           </div>
           <div v-if="errors.password" class="text-danger mb-3">{{ errors.password }}</div>
+
+          <!-- Confirm Password -->
           <div class="row mb-3">
             <label for="confirm-password" class="form-label">Confirm Password</label>
             <input
@@ -36,6 +42,8 @@
           <div v-if="errors.confirmPassword" class="text-danger mb-3">
             {{ errors.confirmPassword }}
           </div>
+
+          <!-- Role -->
           <div class="row mb-3">
             <label for="role" class="form-label">Role</label>
             <select class="form-select" id="role" v-model="formData.role" required>
@@ -43,9 +51,13 @@
               <option value="female">Admin</option>
             </select>
           </div>
+
+          <!-- Sign Up Button -->
           <div class="row mb-3">
             <button type="submit" class="btn btn-primary">Sign Up</button>
           </div>
+
+          <!-- Sign In Navigation -->
           <div class="text-center mb-3">
             Already have an account?
             <router-link to="/signin" class="text-primary"> Sign in</router-link>
@@ -61,6 +73,15 @@
 <script setup>
 import { ref } from 'vue'
 
+// Form data
+const formData = ref({
+  email: '',
+  password: '',
+  confirmPassword: '',
+  role: ''
+})
+
+// Error messages
 const errors = ref({
   email: null,
   password: null,
@@ -69,15 +90,10 @@ const errors = ref({
   signUp: null
 })
 
-const formData = ref({
-  email: '',
-  password: '',
-  confirmPassword: '',
-  role: ''
-})
-
+// Success message
 const success = ref('')
 
+// Clear form
 const clearForm = () => {
   formData.value = {
     email: '',
@@ -87,10 +103,13 @@ const clearForm = () => {
   }
 }
 
+// Sign up function
+/* TODO: check formdata.value.email to json */
 const signUp = () => {
   if (formData.value.email !== 'admin@admin.com') {
     errors.value.signUp = null
     success.value = 'Your account has been created successfully. Please go to the sign-in page.'
+    // TODO: push formdata to json
     clearForm()
   } else {
     success.value = null
@@ -98,6 +117,7 @@ const signUp = () => {
   }
 }
 
+// Validate password
 const validatePassword = (blur) => {
   const password = formData.value.password
   const minLength = 8
@@ -121,6 +141,7 @@ const validatePassword = (blur) => {
   }
 }
 
+// Validate confirm password
 const validateConfirmPassword = (blur) => {
   if (formData.value.password !== formData.value.confirmPassword) {
     if (blur) errors.value.confirmPassword = 'Passwords do not match.'
