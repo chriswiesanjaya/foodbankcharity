@@ -61,7 +61,7 @@ import { useRouter } from 'vue-router'
 // const isAuthenticated = ref(localStorage.getItem('isAuthenticated') === 'true')
 // const router = useRouter()
 
-// const logout = () => {
+// const signout = () => {
 //   localStorage.removeItem('isAuthenticated')
 //   isAuthenticated.value = false
 //   router.push('/login')

@@ -5,17 +5,20 @@
         <h1 class="text-center">Sign In</h1>
         <form @submit.prevent="signin">
           <div class="row mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" v-model="username" required />
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" v-model="email" required />
           </div>
           <div class="row mb-3">
             <label for="password" class="form-label">Password</label>
             <input type="password" class="form-control" id="password" v-model="password" required />
           </div>
-          <div class="text-center">
-            <button type="submit" class="btn btn-primary me-2 mb-3">Sign In</button>
+          <div class="row mb-3">
+            <button type="submit" class="btn btn-primary">Sign In</button>
           </div>
-          <div class="text-center mb-3">Dont have an account? Sign up</div>
+          <div class="text-center mb-3">
+            Don't have an account?
+            <router-link to="/signup" class="text-primary"> Sign up</router-link>
+          </div>
           <div v-if="error" class="text-danger text-center">{{ error }}</div>
         </form>
       </div>
@@ -27,19 +30,20 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-const username = ref('')
+const email = ref('')
 const password = ref('')
 const error = ref('')
 const router = useRouter()
 
+/* TODO: email and password fetch from json */
 const signin = () => {
-  if (username.value === 'admin' && password.value === 'admin') {
+  if (email.value === 'admin' && password.value === 'admin') {
     localStorage.setItem('isAuthenticated', 'true')
     router.push('/').then(() => {
       window.location.reload()
     })
   } else {
-    error.value = 'Invalid credentials'
+    error.value = 'Email or password is incorrect.'
   }
 }
 </script>
@@ -50,7 +54,6 @@ const signin = () => {
   max-width: 80vw;
   margin: 0 auto;
   padding: 20px;
-  /* background-color: #e0bfbf; */
   border-radius: 10px;
 }
 </style>
