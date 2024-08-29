@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-8 offset-md-2">
         <h1 class="text-center">Sign In</h1>
-        <form @submit.prevent="signin">
+        <form @submit.prevent="signIn">
           <div class="row mb-3">
             <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control" id="email" v-model="email" required />
@@ -36,8 +36,8 @@ const error = ref('')
 const router = useRouter()
 
 /* TODO: email and password fetch from json */
-const signin = () => {
-  if (email.value === 'admin' && password.value === 'admin') {
+const signIn = () => {
+  if (email.value === 'admin@admin.com' && password.value === 'admin') {
     localStorage.setItem('isAuthenticated', 'true')
     router.push('/').then(() => {
       window.location.reload()
