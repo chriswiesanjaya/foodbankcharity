@@ -15,6 +15,22 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/blog',
+    name: 'Blog'
+  },
+  {
+    path: '/contactus',
+    name: 'ContactUs'
+  },
+  {
+    path: '/events',
+    name: 'Events'
+  },
+  {
+    path: '/profile',
+    name: 'Profile'
+  },
+  {
     path: '/signin',
     name: 'SignIn',
     component: SignInView
