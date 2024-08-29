@@ -4,7 +4,7 @@ import BHeader from './components/BHeader.vue'
 
 <template>
   <header><BHeader /></header>
-  <main>Main</main>
+  <main><router-view></router-view></main>
   <footer>Footer</footer>
 </template>
 

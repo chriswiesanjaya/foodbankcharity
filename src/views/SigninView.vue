@@ -1,9 +1,9 @@
 <template>
-  <div class="container mt-5">
+  <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
-        <h1 class="text-center">Login</h1>
-        <form @submit.prevent="login">
+        <h1 class="text-center">Sign In</h1>
+        <form @submit.prevent="signin">
           <div class="row mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" v-model="username" required />
@@ -13,9 +13,10 @@
             <input type="password" class="form-control" id="password" v-model="password" required />
           </div>
           <div class="text-center">
-            <button type="submit" class="btn btn-primary me-2">Submit</button>
+            <button type="submit" class="btn btn-primary me-2 mb-3">Sign In</button>
           </div>
-          <div v-if="error" class="text-danger">{{ error }}</div>
+          <div class="text-center mb-3">Dont have an account? Sign up</div>
+          <div v-if="error" class="text-danger text-center">{{ error }}</div>
         </form>
       </div>
     </div>
@@ -31,7 +32,7 @@ const password = ref('')
 const error = ref('')
 const router = useRouter()
 
-const login = () => {
+const signin = () => {
   if (username.value === 'admin' && password.value === 'admin') {
     localStorage.setItem('isAuthenticated', 'true')
     router.push('/').then(() => {
