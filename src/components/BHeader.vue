@@ -22,13 +22,12 @@
     </div>
 
     <!-- Navigation Header-->
-    <!-- TODO: hide if not signed in. 
-     modify navigation -->
+    <!-- TODO: Modify navigation -->
     <header class="row nav-header py-3" v-if="isAuthenticated">
       <ul class="nav nav-pills justify-content-between">
         <!-- Profile Navigation -->
         <li class="nav-item">
-          <router-link to="/aboutus" class="nav-link" active-class="active">Profile</router-link>
+          <router-link to="/profile" class="nav-link" active-class="active">Profile</router-link>
         </li>
 
         <!-- Events Navigation -->
@@ -59,13 +58,13 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-/* TODO: check Authentication */
-
 const isAuthenticated = ref(localStorage.getItem('isAuthenticated') === 'true')
 const router = useRouter()
 
 const signOut = () => {
   localStorage.removeItem('isAuthenticated')
+  localStorage.removeItem('email')
+  localStorage.removeItem('role')
   isAuthenticated.value = false
   router.push('/login')
 }

@@ -37,17 +37,22 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import accounts from '@/assets/json/accounts.json'
 
 const email = ref('')
 const password = ref('')
 const error = ref('')
 const router = useRouter()
 
-/* TODO: email and password fetch from json */
+// Sign in function
 const signIn = () => {
-  if (email.value === 'admin@admin.com' && password.value === 'admin') {
+  const user = accounts.find((account) => account.email === email.value)
+
+  if (user && user.password === password.value) {
     localStorage.setItem('isAuthenticated', 'true')
-    router.push('/').then(() => {
+    localStorage.setItem('email', user.email)
+    localStorage.setItem('role', user.role)
+    router.push('/profile').then(() => {
       window.location.reload()
     })
   } else {

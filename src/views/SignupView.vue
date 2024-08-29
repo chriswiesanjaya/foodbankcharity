@@ -47,8 +47,8 @@
           <div class="row mb-3">
             <label for="role" class="form-label">Role</label>
             <select class="form-select" id="role" v-model="formData.role" required>
-              <option value="male">User</option>
-              <option value="female">Admin</option>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
             </select>
           </div>
 
@@ -72,8 +72,8 @@
 
 <script setup>
 import { ref } from 'vue'
+import accounts from '@/assets/json/accounts.json'
 
-// Form data
 const formData = ref({
   email: '',
   password: '',
@@ -81,7 +81,6 @@ const formData = ref({
   role: ''
 })
 
-// Error messages
 const errors = ref({
   email: null,
   password: null,
@@ -90,7 +89,6 @@ const errors = ref({
   signUp: null
 })
 
-// Success message
 const success = ref('')
 
 // Clear form
@@ -104,9 +102,10 @@ const clearForm = () => {
 }
 
 // Sign up function
-/* TODO: check formdata.value.email to json */
 const signUp = () => {
-  if (formData.value.email !== 'admin@admin.com') {
+  const user = accounts.find((account) => account.email === formData.value.email)
+
+  if (!user) {
     errors.value.signUp = null
     success.value = 'Your account has been created successfully. Please go to the sign-in page.'
     // TODO: push formdata to json
