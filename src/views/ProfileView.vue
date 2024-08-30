@@ -11,10 +11,10 @@
           />
         </div>
         <div class="row">
-          <h3>Email: {{ profileData.email }}</h3>
+          <p><strong>Email:</strong> {{ profileData.email }}</p>
         </div>
         <div class="row">
-          <h3>Role: {{ profileData.role }}</h3>
+          <p><strong>Role:</strong> {{ profileData.role }}</p>
         </div>
       </div>
     </div>

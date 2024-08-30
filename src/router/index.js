@@ -18,10 +18,6 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/blog',
-    name: 'Blog'
-  },
-  {
     path: '/contactus',
     name: 'ContactUs'
   },

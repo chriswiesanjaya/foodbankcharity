@@ -46,11 +46,6 @@
           <router-link to="/aboutus" class="nav-link" active-class="active">Events</router-link>
         </li>
 
-        <!-- Blog Navigation -->
-        <li class="nav-item">
-          <router-link to="/aboutus" class="nav-link" active-class="active">Blog</router-link>
-        </li>
-
         <!-- About Navigation -->
         <li class="nav-item">
           <router-link to="/aboutus" class="nav-link" active-class="active">About Us</router-link>
