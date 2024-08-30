@@ -37,7 +37,6 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import accounts from '@/assets/json/accounts.json'
 
 const email = ref('')
 const password = ref('')
@@ -46,6 +45,7 @@ const router = useRouter()
 
 // Sign in function
 const signIn = () => {
+  const accounts = JSON.parse(localStorage.getItem('accounts')) || []
   const user = accounts.find((account) => account.email === email.value)
 
   if (user && user.password === password.value) {

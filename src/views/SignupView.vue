@@ -62,8 +62,12 @@
             Already have an account?
             <router-link to="/signin" class="text-primary"> Sign in</router-link>
           </div>
-          <div v-if="errors.signUp" class="text-danger text-center">{{ errors.signUp }}</div>
-          <div v-if="success" class="text-success text-center">{{ success }}</div>
+          <div v-if="signUpMessages.failure" class="text-danger text-center">
+            {{ signUpMessages.failure }}
+          </div>
+          <div v-if="signUpMessages.success" class="text-success text-center">
+            {{ signUpMessages.success }}
+          </div>
         </form>
       </div>
     </div>
@@ -72,7 +76,6 @@
 
 <script setup>
 import { ref } from 'vue'
-import accounts from '@/assets/json/accounts.json'
 
 const formData = ref({
   email: '',
@@ -85,11 +88,13 @@ const errors = ref({
   email: null,
   password: null,
   confirmPassword: null,
-  role: null,
-  signUp: null
+  role: null
 })
 
-const success = ref('')
+const signUpMessages = ref({
+  success: null,
+  failure: null
+})
 
 // Clear form
 const clearForm = () => {
@@ -103,16 +108,33 @@ const clearForm = () => {
 
 // Sign up function
 const signUp = () => {
+  // Validate form
+  validatePassword(true)
+  validateConfirmPassword(true)
+
+  // Get existing local storage accounts
+  const accounts = JSON.parse(localStorage.getItem('accounts')) || []
   const user = accounts.find((account) => account.email === formData.value.email)
 
-  if (!user) {
-    errors.value.signUp = null
-    success.value = 'Your account has been created successfully. Please go to the sign-in page.'
-    // TODO: push formdata to json
+  if (!user && !errors.value.password && !errors.value.confirmPassword) {
+    // Handle sign up success
+    signUpMessages.value.success = 'Your account has been created successfully.'
+    signUpMessages.value.failure = null
+
+    // Make new account and push to local storage
+    const newAccount = {
+      email: formData.value.email,
+      password: formData.value.password,
+      role: formData.value.role
+    }
+    accounts.push(newAccount)
+    localStorage.setItem('accounts', JSON.stringify(accounts))
+
     clearForm()
   } else {
-    success.value = null
-    errors.value.signUp = 'The email address you entered is already registered.'
+    // Handle sign up failure
+    signUpMessages.value.success = null
+    signUpMessages.value.failure = 'Registration failed. Please try again.'
   }
 }
 
@@ -142,7 +164,10 @@ const validatePassword = (blur) => {
 
 // Validate confirm password
 const validateConfirmPassword = (blur) => {
-  if (formData.value.password !== formData.value.confirmPassword) {
+  const password = formData.value.password
+  const confirmPassword = formData.value.confirmPassword
+
+  if (password !== confirmPassword) {
     if (blur) errors.value.confirmPassword = 'Passwords do not match.'
   } else {
     errors.value.confirmPassword = null
