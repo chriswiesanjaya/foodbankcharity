@@ -43,7 +43,7 @@
 
         <!-- Events Navigation -->
         <li class="nav-item">
-          <router-link to="/aboutus" class="nav-link" active-class="active">Events</router-link>
+          <router-link to="/events" class="nav-link" active-class="active">Events</router-link>
         </li>
 
         <!-- About Navigation -->
