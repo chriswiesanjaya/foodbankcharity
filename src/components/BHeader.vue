@@ -53,7 +53,9 @@
 
         <!-- Contact Us Navigation -->
         <li class="nav-item">
-          <router-link to="/aboutus" class="nav-link" active-class="active">Contact Us</router-link>
+          <router-link to="/contactus" class="nav-link" active-class="active"
+            >Contact Us</router-link
+          >
         </li>
       </ul>
     </header>

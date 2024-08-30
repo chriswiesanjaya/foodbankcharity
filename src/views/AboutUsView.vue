@@ -3,6 +3,7 @@
     <div class="row">
       <div class="col-md-8 offset-md-2">
         <h1 class="text-center">About Us</h1>
+        <!-- Vision -->
         <div class="row">
           <h3>Vision</h3>
           <p>
@@ -17,6 +18,8 @@
             end food insecurity.
           </p>
         </div>
+
+        <!-- Mission -->
         <div class="row">
           <h3>Mission</h3>
           <p>

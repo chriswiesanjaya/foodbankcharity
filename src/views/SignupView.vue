@@ -57,16 +57,20 @@
             <button type="submit" class="btn btn-primary">Sign Up</button>
           </div>
 
+          <!-- Sign Up failure message -->
+          <div v-if="signUpMessages.failure" class="text-danger text-center">
+            {{ signUpMessages.failure }}
+          </div>
+
+          <!-- Sign Up success message -->
+          <div v-if="signUpMessages.success" class="text-success text-center">
+            {{ signUpMessages.success }}
+          </div>
+
           <!-- Sign In Navigation -->
           <div class="text-center mb-3">
             Already have an account?
             <router-link to="/signin" class="text-primary"> Sign in</router-link>
-          </div>
-          <div v-if="signUpMessages.failure" class="text-danger text-center">
-            {{ signUpMessages.failure }}
-          </div>
-          <div v-if="signUpMessages.success" class="text-success text-center">
-            {{ signUpMessages.success }}
           </div>
         </form>
       </div>
@@ -77,6 +81,7 @@
 <script setup>
 import { ref } from 'vue'
 
+// Form data
 const formData = ref({
   email: '',
   password: '',
@@ -84,6 +89,7 @@ const formData = ref({
   role: ''
 })
 
+// Error messages
 const errors = ref({
   email: null,
   password: null,
@@ -91,6 +97,7 @@ const errors = ref({
   role: null
 })
 
+// Sign Up messages
 const signUpMessages = ref({
   success: null,
   failure: null
@@ -116,8 +123,8 @@ const signUp = () => {
   const accounts = JSON.parse(localStorage.getItem('accounts')) || []
   const user = accounts.find((account) => account.email === formData.value.email)
 
+  // Handle sign up success
   if (!user && !errors.value.password && !errors.value.confirmPassword) {
-    // Handle sign up success
     signUpMessages.value.success = 'Your account has been created successfully.'
     signUpMessages.value.failure = null
 
@@ -131,10 +138,11 @@ const signUp = () => {
     localStorage.setItem('accounts', JSON.stringify(accounts))
 
     clearForm()
-  } else {
+
     // Handle sign up failure
+  } else {
     signUpMessages.value.success = null
-    signUpMessages.value.failure = 'Registration failed. Please try again.'
+    signUpMessages.value.failure = 'Failed to create an account. Please try again.'
   }
 }
 

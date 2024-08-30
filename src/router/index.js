@@ -4,6 +4,7 @@ import SignInView from '@/views/SignInView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import HomeView from '@/views/HomeView.vue'
+import ContactUsView from '@/views/ContactUsView.vue'
 
 const routes = [
   {
@@ -19,16 +20,20 @@ const routes = [
   },
   {
     path: '/contactus',
-    name: 'ContactUs'
+    name: 'ContactUs',
+    component: ContactUsView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/events',
-    name: 'Events'
+    name: 'Events',
+    meta: { requiresAuth: true }
   },
   {
     path: '/profile',
     name: 'Profile',
-    component: ProfileView
+    component: ProfileView,
+    meta: { requiresAuth: true }
   },
   {
     path: '/signin',

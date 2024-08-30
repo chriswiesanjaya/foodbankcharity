@@ -3,6 +3,7 @@
     <div class="row">
       <div class="col-md-8 offset-md-2">
         <h1 class="text-center">Profile</h1>
+        <!-- Profile image -->
         <div class="image-container">
           <img
             src="@/assets/images/blank-profile-picture.jpeg"
@@ -10,9 +11,13 @@
             class="profile-image"
           />
         </div>
+
+        <!-- Profile email -->
         <div class="row">
           <p><strong>Email:</strong> {{ profileData.email }}</p>
         </div>
+
+        <!-- Profile role -->
         <div class="row">
           <p><strong>Role:</strong> {{ profileData.role }}</p>
         </div>
@@ -24,7 +29,7 @@
 <script setup>
 import { ref } from 'vue'
 
-// Profile data
+// Profile user data
 const profileData = ref({
   email: localStorage.getItem('email'),
   role: localStorage.getItem('role')
@@ -43,12 +48,12 @@ const profileData = ref({
 .image-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px; /* Adjust as needed */
+  margin-bottom: 20px;
 }
 
 .profile-image {
-  max-width: 100%; /* Ensure the image doesn't overflow its container */
-  width: 200px; /* Adjust size as needed */
+  max-width: 100%;
+  width: 200px;
   height: auto;
 }
 </style>
