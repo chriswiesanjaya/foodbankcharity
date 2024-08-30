@@ -3,11 +3,13 @@ import AboutUsView from '../views/AboutUsView.vue'
 import SignInView from '@/views/SignInView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import ProfileView from '@/views/ProfileView.vue'
+import HomeView from '@/views/HomeView.vue'
 
 const routes = [
   {
     path: '/',
-    name: 'Home'
+    name: 'Home',
+    component: HomeView
   },
   {
     path: '/aboutus',

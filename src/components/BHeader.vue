@@ -8,16 +8,27 @@
       <!-- Center Section -->
       <div class="col text-center">
         <router-link to="/" class="foodbank-logo">
-          <h3>foodbankcharity</h3>
+          <h3>FOODBANKCHARITY</h3>
         </router-link>
       </div>
 
       <!-- Right Section -->
       <div class="col text-end">
-        <router-link v-if="!isAuthenticated" to="/signin" class="btn btn-primary"
+        <router-link
+          v-if="!isAuthenticated"
+          to="/signin"
+          class="btn btn-primary"
+          style="font-size: 12px"
           >Sign In</router-link
         >
-        <button v-if="isAuthenticated" class="btn btn-secondary" @click="signOut">Sign Out</button>
+        <button
+          v-if="isAuthenticated"
+          @click="signOut"
+          class="btn btn-secondary"
+          style="font-size: 12px"
+        >
+          Sign Out
+        </button>
       </div>
     </div>
 
