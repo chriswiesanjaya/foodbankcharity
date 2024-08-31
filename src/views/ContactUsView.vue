@@ -46,7 +46,7 @@
             <label for="message" class="form-label">Message</label>
             <textarea
               class="form-control"
-              id="subject"
+              id="message"
               rows="3"
               v-model="formData.message"
               required
@@ -156,8 +156,9 @@ const validateSubject = (blur) => {
 // Validate message
 const validateMessage = (blur) => {
   const message = formData.value.message
+  const minLength = 10
 
-  if (message.length < 10) {
+  if (message.length < minLength) {
     if (blur) errors.value.message = 'Message must be at least 10 characters.'
   } else {
     errors.value.message = null

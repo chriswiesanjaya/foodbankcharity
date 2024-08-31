@@ -18,28 +18,27 @@
 
         <!-- Buttons for user -->
         <div class="col py-5 text-center" v-if="role == 'user'">
-          <!-- Donate button for user -->
+          <!-- Donate button -->
           <button type="button" class="btn btn-secondary me-3" @click="toggleDonateButton">
             Donate
           </button>
 
-          <!-- Volunteer button for user -->
+          <!-- Volunteer button -->
           <button type="button" class="btn btn-secondary me-3" @click="toggleVolunteerButton">
             Volunteer
           </button>
 
-          <!-- Rate button for user -->
+          <!-- Rate button -->
           <button type="button" class="btn btn-secondary" @click="toggleRateButton">Rate</button>
         </div>
 
         <!-- Forms for user -->
-        <!-- TODO: make user forms -->
         <div class="row">
           <!-- Donate form for user -->
           <div v-if="showForms.donate">
-            <h3 class="text-center">Donation</h3>
+            <h3 class="text-center">Donate to an Event</h3>
             <form @submit.prevent="submitDonate">
-              <!-- Donate charity -->
+              <!-- Donate form charity -->
               <div class="row mb-3">
                 <label for="charity" class="form-label">Charity</label>
                 <select class="form-select" id="charity" v-model="donateFormData.charity" required>
@@ -49,7 +48,7 @@
                 </select>
               </div>
 
-              <!-- Donate amount -->
+              <!-- Donate form amount -->
               <div class="row mb-3">
                 <label for="amount" class="form-label">Amount</label>
                 <input
@@ -64,17 +63,17 @@
               </div>
               <div v-if="userErrors.amount" class="text-danger mb-3">{{ userErrors.amount }}</div>
 
-              <!-- Donate Submit Button -->
+              <!-- Donate form Submit Button -->
               <div class="row mb-3">
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
 
-              <!-- Donate Submit failure message -->
+              <!-- Donate form Submit failure message -->
               <div v-if="submitMessages.failure" class="text-danger text-center">
                 {{ submitMessages.failure }}
               </div>
 
-              <!-- Donate Submit success message -->
+              <!-- Donate form Submit success message -->
               <div v-if="submitMessages.success" class="text-success text-center">
                 {{ submitMessages.success }}
               </div>
@@ -83,9 +82,9 @@
 
           <!-- Volunteer form for user -->
           <div v-if="showForms.volunteer">
-            <h3 class="text-center">Volunteer</h3>
+            <h3 class="text-center">Apply for Volunteer</h3>
             <form @submit.prevent="submitVolunteer">
-              <!-- Volunteer charity -->
+              <!-- Volunteer form charity -->
               <div class="row mb-3">
                 <label for="charity" class="form-label">Charity</label>
                 <select
@@ -100,7 +99,7 @@
                 </select>
               </div>
 
-              <!-- Volunteer Job -->
+              <!-- Volunteer form job -->
               <div class="row mb-3">
                 <label for="job" class="form-label">Job</label>
                 <select class="form-select" id="job" v-model="volunteerFormData.job" required>
@@ -110,17 +109,17 @@
                 </select>
               </div>
 
-              <!-- Volunteer Submit Button -->
+              <!-- Volunteer form Submit Button -->
               <div class="row mb-3">
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
 
-              <!-- Volunteer Submit failure message -->
+              <!-- Volunteer form Submit failure message -->
               <div v-if="submitMessages.failure" class="text-danger text-center">
                 {{ submitMessages.failure }}
               </div>
 
-              <!-- Volunteer Submit success message -->
+              <!-- Volunteer form Submit success message -->
               <div v-if="submitMessages.success" class="text-success text-center">
                 {{ submitMessages.success }}
               </div>
@@ -129,7 +128,60 @@
 
           <!-- Rate form for user -->
           <div v-if="showForms.rate">
-            <h3>Rate</h3>
+            <h3 class="text-center">Rate an Event</h3>
+            <form @submit.prevent="submitRate">
+              <!-- Rate form charity -->
+              <div class="row mb-3">
+                <label for="charity" class="form-label">Charity</label>
+                <select class="form-select" id="charity" v-model="rateFormData.charity" required>
+                  <option v-for="event in events" :key="event.name" :value="event.name">
+                    {{ event.name }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Rate form rate -->
+              <div class="row mb-3">
+                <label for="rate" class="form-label">Rating</label>
+                <select class="form-select" id="rate" v-model="rateFormData.rate" required>
+                  <option value="5">5 - Very Good</option>
+                  <option value="4">4 - Good</option>
+                  <option value="3">3 - Average</option>
+                  <option value="2">2 - Poor</option>
+                  <option value="1">1 - Very Poor</option>
+                </select>
+              </div>
+
+              <!-- Rate form review -->
+              <div class="row mb-3">
+                <label for="review" class="form-label">Review</label>
+                <textarea
+                  class="form-control"
+                  id="review"
+                  rows="3"
+                  v-model="rateFormData.review"
+                  required
+                  @blur="() => validateRateReview(true)"
+                  @input="() => validateRateReview(false)"
+                />
+              </div>
+              <div v-if="userErrors.review" class="text-danger mb-3">{{ userErrors.review }}</div>
+
+              <!-- Volunteer form Submit Button -->
+              <div class="row mb-3">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+
+              <!-- Volunteer form Submit failure message -->
+              <div v-if="submitMessages.failure" class="text-danger text-center">
+                {{ submitMessages.failure }}
+              </div>
+
+              <!-- Volunteer form Submit success message -->
+              <div v-if="submitMessages.success" class="text-success text-center">
+                {{ submitMessages.success }}
+              </div>
+            </form>
           </div>
         </div>
 
@@ -255,6 +307,18 @@ const validateDonateAmount = (blur) => {
   }
 }
 
+// Validate rate review
+const validateRateReview = (blur) => {
+  const rateReview = rateFormData.value.review
+  const minLength = 10
+
+  if (rateReview.length < minLength) {
+    if (blur) userErrors.value.review = 'Review message must be at least 10 characters.'
+  } else {
+    userErrors.value.review = null
+  }
+}
+
 // Submit donate function
 const submitDonate = () => {
   // Validate form
@@ -280,6 +344,27 @@ const submitVolunteer = () => {
   // TODO: add +1 to localstorage volunteer
   submitMessages.value.success = 'Your volunteer application has been submitted successfully.'
   submitMessages.value.failure = null
+
+  clearForm()
+}
+
+// Submit rate function
+const submitRate = () => {
+  // Validate form
+  validateRateReview(true)
+
+  if (!userErrors.value.review) {
+    // Handle submit rating success
+    // TODO: add rate to localstorage rating
+    submitMessages.value.success = 'Your rating has been submitted successfully.'
+    submitMessages.value.failure = null
+
+    clearForm()
+  } else {
+    // Handle submit donate failure
+    submitMessages.value.success = null
+    submitMessages.value.failure = 'Failed to submit your rating. Please try again.'
+  }
 }
 
 // Errors for user

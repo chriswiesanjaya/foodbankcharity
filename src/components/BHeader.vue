@@ -33,7 +33,7 @@
     </div>
 
     <!-- Navigation Header-->
-    <!-- TODO: Modify navigation -->
+    <!-- TODO: Check on navigation -->
     <header class="row nav-header py-3" v-if="isAuthenticated">
       <ul class="nav nav-pills justify-content-between">
         <!-- Profile Navigation -->
