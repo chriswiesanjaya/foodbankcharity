@@ -195,9 +195,44 @@
 
         <!-- Forms for admin -->
         <!-- TODO: make admin forms -->
-        <div class="row text-center">
+        <div class="row">
           <div v-if="showForms.createEvent">
-            <h3>Create Event</h3>
+            <h3 class="text-center">Create an Event</h3>
+            <form>
+              <!-- Create Event form name -->
+              <div class="row mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  v-model="createEventFormData.name"
+                  required
+                  @blur="() => validateCreateEventName(true)"
+                  @input="() => validateCreateEventName(false)"
+                />
+              </div>
+              <div v-if="adminErrors.name" class="text-danger mb-3">{{ adminErrors.name }}</div>
+
+              <!-- Create Event form location -->
+              <div class="row mb-3">
+                <label for="location" class="form-label">Location</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="location"
+                  v-model="createEventFormData.location"
+                  required
+                  @blur="() => validateCreateEventLocation(true)"
+                  @input="() => validateCreateEventLocation(false)"
+                />
+              </div>
+              <div v-if="adminErrors.location" class="text-danger mb-3">
+                {{ adminErrors.location }}
+
+                <!-- Create Event form date -->
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -319,6 +354,30 @@ const validateRateReview = (blur) => {
   }
 }
 
+// Validate create event name
+const validateCreateEventName = (blur) => {
+  const name = createEventFormData.value.name
+  const minLength = 3
+
+  if (name.length < minLength) {
+    if (blur) adminErrors.value.name = 'Name must be at least 3 characters.'
+  } else {
+    adminErrors.value.name = null
+  }
+}
+
+// Validate create event location
+const validateCreateEventLocation = (blur) => {
+  const location = createEventFormData.value.location
+  const minLength = 3
+
+  if (location.length < minLength) {
+    if (blur) adminErrors.value.location = 'Location must be at least 3 characters.'
+  } else {
+    adminErrors.value.location = null
+  }
+}
+
 // Submit donate function
 const submitDonate = () => {
   // Validate form
@@ -361,7 +420,7 @@ const submitRate = () => {
 
     clearForm()
   } else {
-    // Handle submit donate failure
+    // Handle submit rating failure
     submitMessages.value.success = null
     submitMessages.value.failure = 'Failed to submit your rating. Please try again.'
   }

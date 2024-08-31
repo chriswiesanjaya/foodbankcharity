@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <!-- foodbankcharity Header -->
+    <!-- Food Bank Charity Header -->
     <div class="row foodbank-header py-3">
       <!-- Left Section -->
       <div class="col text-start"></div>
@@ -8,7 +8,7 @@
       <!-- Center Section -->
       <div class="col text-center">
         <router-link to="/" class="foodbank-logo">
-          <h3>FOOD BANK CHARITY</h3>
+          <h3><strong>FOOD BANK CHARITY</strong></h3>
         </router-link>
       </div>
 
@@ -46,7 +46,7 @@
           <router-link to="/events" class="nav-link" active-class="active">Events</router-link>
         </li>
 
-        <!-- About Navigation -->
+        <!-- About Us Navigation -->
         <li class="nav-item">
           <router-link to="/aboutus" class="nav-link" active-class="active">About Us</router-link>
         </li>

@@ -134,8 +134,9 @@ const submitInquiry = () => {
 // Validate name
 const validateName = (blur) => {
   const name = formData.value.name
+  const minLength = 3
 
-  if (name.length < 3) {
+  if (name.length < minLength) {
     if (blur) errors.value.name = 'Name must be at least 3 characters.'
   } else {
     errors.value.name = null
@@ -145,8 +146,9 @@ const validateName = (blur) => {
 // Validate subject
 const validateSubject = (blur) => {
   const subject = formData.value.subject
+  const minLength = 3
 
-  if (subject.length < 3) {
+  if (subject.length < minLength) {
     if (blur) errors.value.subject = 'Subject must be at least 3 characters.'
   } else {
     errors.value.subject = null
