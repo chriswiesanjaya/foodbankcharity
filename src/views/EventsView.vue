@@ -20,23 +20,18 @@
         <!-- Buttons for user -->
         <!-- TODO: add to class v-if="role == 'user'" -->
         <div class="col py-5 text-center">
-          <button
-            type="button"
-            class="btn btn-secondary me-3"
-            @click="showForms.donate = !showForms.donate"
-          >
+          <!-- Donate button for user -->
+          <button type="button" class="btn btn-secondary me-3" @click="toggleDonateButton">
             Donate
           </button>
-          <button
-            type="button"
-            class="btn btn-secondary me-3"
-            @click="showForms.volunteer = !showForms.volunteer"
-          >
+
+          <!-- Volunteer button for user -->
+          <button type="button" class="btn btn-secondary me-3" @click="toggleVolunteerButton">
             Volunteer
           </button>
-          <button type="button" class="btn btn-secondary" @click="showForms.rate = !showForms.rate">
-            Rate
-          </button>
+
+          <!-- Rate button for user -->
+          <button type="button" class="btn btn-secondary" @click="toggleRateButton">Rate</button>
         </div>
 
         <!-- Forms for user -->
@@ -50,11 +45,8 @@
         <!-- Buttons for admin -->
         <!-- TODO: add to class v-if="role == 'admin'" -->
         <div class="col py-5 text-center">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            @click="showForms.createEvent = !showForms.createEvent"
-          >
+          <!-- Create Event button for user -->
+          <button type="button" class="btn btn-secondary" @click="toggleCreateEventButton">
             Create Event
           </button>
         </div>
@@ -92,6 +84,95 @@ const showForms = ref({
   rate: false,
   createEvent: false
 })
+
+// Donate form data
+const donateFormData = ref({
+  charity: '',
+  amount: ''
+})
+
+// Volunteer form data
+const volunteerFormData = ref({
+  charity: '',
+  job: ''
+})
+
+// Rate form data
+const rateFormData = ref({
+  charity: '',
+  rate: '',
+  review: ''
+})
+
+// Create Event form data
+const createEventFormData = ref({
+  name: '',
+  location: '',
+  date: ''
+})
+
+const toggleDonateButton = () => {
+  showForms.value.donate = !showForms.value.donate
+  showForms.value.volunteer = false
+  showForms.value.rate = false
+  showForms.value.createEvent = false
+}
+
+const toggleVolunteerButton = () => {
+  showForms.value.donate = false
+  showForms.value.volunteer = !showForms.value.volunteer
+  showForms.value.rate = false
+  showForms.value.createEvent = false
+}
+
+const toggleRateButton = () => {
+  showForms.value.donate = false
+  showForms.value.volunteer = false
+  showForms.value.rate = !showForms.value.rate
+  showForms.value.createEvent = false
+}
+
+const toggleCreateEventButton = () => {
+  showForms.value.donate = false
+  showForms.value.volunteer = false
+  showForms.value.rate = false
+  showForms.value.createEvent = !showForms.value.createEvent
+}
+
+const userErrors = ref({
+  charity: null,
+  amount: null,
+  job: null,
+  rate: null,
+  review: null
+})
+
+const adminErrors = ref({
+  name: null,
+  location: null,
+  date: null
+})
+
+// Clear form
+const clearForm = () => {
+  donateFormData.value = {
+    charity: '',
+    amount: ''
+  }
+  volunteerFormData.value = {
+    charity: '',
+    job: ''
+  }
+  rateFormData.value = {
+    charity: '',
+    rating: ''
+  }
+  createEventFormData.value = {
+    name: '',
+    location: '',
+    date: ''
+  }
+}
 </script>
 
 <style scoped>

@@ -4,7 +4,7 @@
       <div class="col-md-8 offset-md-2">
         <!-- Sign Up Form -->
         <h1 class="text-center">Contact Us</h1>
-        <form @submit.prevent="sendInquiry">
+        <form @submit.prevent="submitInquiry">
           <!-- Email -->
           <div class="row mb-3">
             <label for="email" class="form-label">Email</label>
@@ -56,19 +56,19 @@
           </div>
           <div v-if="errors.message" class="text-danger mb-3">{{ errors.message }}</div>
 
-          <!-- Send Button -->
+          <!-- Submit Button -->
           <div class="row mb-3">
-            <button type="submit" class="btn btn-primary">Send</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
           </div>
 
-          <!-- Send failure message -->
-          <div v-if="sendInquiryMessages.failure" class="text-danger text-center">
-            {{ sendInquiryMessages.failure }}
+          <!-- Submit failure message -->
+          <div v-if="submitInquiryMessages.failure" class="text-danger text-center">
+            {{ submitInquiryMessages.failure }}
           </div>
 
-          <!-- Send success message -->
-          <div v-if="sendInquiryMessages.success" class="text-success text-center">
-            {{ sendInquiryMessages.success }}
+          <!-- Submit success message -->
+          <div v-if="submitInquiryMessages.success" class="text-success text-center">
+            {{ submitInquiryMessages.success }}
           </div>
         </form>
       </div>
@@ -95,8 +95,8 @@ const errors = ref({
   message: null
 })
 
-// Send inquiry messages
-const sendInquiryMessages = ref({
+// Submit inquiry messages
+const submitInquiryMessages = ref({
   success: null,
   failure: null
 })
@@ -111,23 +111,23 @@ const clearForm = () => {
   }
 }
 
-// Send inquiry function
-const sendInquiry = () => {
+// Submit inquiry function
+const submitInquiry = () => {
   // Validate form
   validateName(true)
   validateSubject(true)
   validateMessage(true)
 
   if (!errors.value.name && !errors.value.subject && !errors.value.message) {
-    // Handle send inquiry success
-    sendInquiryMessages.value.success = 'Your inquiry has been sent successfully.'
-    sendInquiryMessages.value.failure = null
+    // Handle submit inquiry success
+    submitInquiryMessages.value.success = 'Your inquiry has been sent successfully.'
+    submitInquiryMessages.value.failure = null
 
     clearForm()
   } else {
-    // Handle send inquiry failure
-    sendInquiryMessages.value.success = null
-    sendInquiryMessages.value.failure = 'Failed to send your inquiry. Please try again.'
+    // Handle submit inquiry failure
+    submitInquiryMessages.value.success = null
+    submitInquiryMessages.value.failure = 'Failed to submit your inquiry. Please try again.'
   }
 }
 
