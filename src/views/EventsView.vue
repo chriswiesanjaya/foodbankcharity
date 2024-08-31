@@ -111,6 +111,7 @@ const createEventFormData = ref({
   date: ''
 })
 
+// Donate button toggle onclick
 const toggleDonateButton = () => {
   showForms.value.donate = !showForms.value.donate
   showForms.value.volunteer = false
@@ -118,6 +119,7 @@ const toggleDonateButton = () => {
   showForms.value.createEvent = false
 }
 
+// Volunteer button toggle onclick
 const toggleVolunteerButton = () => {
   showForms.value.donate = false
   showForms.value.volunteer = !showForms.value.volunteer
@@ -125,6 +127,7 @@ const toggleVolunteerButton = () => {
   showForms.value.createEvent = false
 }
 
+// Rate button toggle onclick
 const toggleRateButton = () => {
   showForms.value.donate = false
   showForms.value.volunteer = false
@@ -132,6 +135,7 @@ const toggleRateButton = () => {
   showForms.value.createEvent = false
 }
 
+// Create Event button toggle onclick
 const toggleCreateEventButton = () => {
   showForms.value.donate = false
   showForms.value.volunteer = false
@@ -139,6 +143,7 @@ const toggleCreateEventButton = () => {
   showForms.value.createEvent = !showForms.value.createEvent
 }
 
+// Errors for user
 const userErrors = ref({
   charity: null,
   amount: null,
@@ -147,6 +152,7 @@ const userErrors = ref({
   review: null
 })
 
+// Errors for admin
 const adminErrors = ref({
   name: null,
   location: null,
