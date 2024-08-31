@@ -8,7 +8,7 @@
         <p>📍 Melbourne, VIC 3000</p>
         <p>✉️ hi@fbc.com</p>
         <p>📱 +61 123456789</p>
-        <p>⏰ 9:00am – 5:00pm</p>
+        <p>⏰ 9:00am - 5:00pm</p>
       </div>
 
       <!-- Right Section -->
@@ -16,6 +16,7 @@
         <p><strong>Christian Wiesanjaya</strong></p>
         <p>34113495</p>
         <p>FIT5032 S2 2024</p>
+        <p>A2 - Basic Web App</p>
         <a href="https://github.com/chriswiesanjaya/foodbankcharity" target="_blank" rel="noopener">
           GitHub Project
         </a>
