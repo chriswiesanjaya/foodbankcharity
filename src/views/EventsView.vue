@@ -16,6 +16,20 @@
             <Column field="rating" header="Rating"></Column>
           </DataTable>
         </div>
+
+        <!-- Buttons for user -->
+        <!-- add  v-if="role == 'user'" -->
+        <div class="col py-5 text-center">
+          <button type="button" class="btn btn-secondary me-3">Donate</button>
+          <button type="button" class="btn btn-secondary me-3">Volunteer</button>
+          <button type="button" class="btn btn-secondary">Rate</button>
+        </div>
+
+        <!-- Buttons for admin -->
+        <!-- add v-if="role == 'admin'" -->
+        <div class="col py-5 text-center">
+          <button type="button" class="btn btn-secondary me-3">Create Event</button>
+        </div>
       </div>
     </div>
   </div>
@@ -26,15 +40,24 @@ import { ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 
+const role = localStorage.getItem('role')
 const storedEvents = ref(JSON.parse(localStorage.getItem('events')) || [])
 
 // Add computed rating to each event
 const events = ref(
   storedEvents.value.map((event) => ({
     ...event,
-    rating: event.numberRating ? (event.totalRating / event.numberRating).toFixed(2) : 0
+    rating: event.numberRating > 0 ? (event.totalRating / event.numberRating).toFixed(2) : 0
   }))
 )
+
+// Show forms
+const showForms = ref({
+  donate: false,
+  volunteer: false,
+  rate: false,
+  create: false
+})
 </script>
 
 <style scoped>
