@@ -120,7 +120,7 @@ const submitInquiry = () => {
 
   if (!errors.value.name && !errors.value.subject && !errors.value.message) {
     // Handle submit inquiry success
-    submitInquiryMessages.value.success = 'Your inquiry has been sent successfully.'
+    submitInquiryMessages.value.success = 'Your inquiry has been submitted successfully.'
     submitInquiryMessages.value.failure = null
 
     clearForm()
