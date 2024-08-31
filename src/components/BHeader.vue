@@ -14,21 +14,10 @@
 
       <!-- Right Section -->
       <div class="col text-end">
-        <router-link
-          v-if="!isAuthenticated"
-          to="/signin"
-          class="btn btn-primary"
-          style="font-size: 12px"
+        <router-link v-if="!isAuthenticated" to="/signin" class="btn btn-primary"
           >Sign In</router-link
         >
-        <button
-          v-if="isAuthenticated"
-          @click="signOut"
-          class="btn btn-secondary"
-          style="font-size: 12px"
-        >
-          Sign Out
-        </button>
+        <button v-if="isAuthenticated" @click="signOut" class="btn btn-secondary">Sign Out</button>
       </div>
     </div>
 

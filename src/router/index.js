@@ -46,6 +46,11 @@ const routes = [
     path: '/signup',
     name: 'SignUp',
     component: SignUpView
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    redirect: { name: 'Home' }
   }
 ]
 
@@ -56,6 +61,14 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated')
+
+  // Redirect authenticated users away from SignIn and SignUp
+  if (isAuthenticated && (to.name === 'SignIn' || to.name === 'SignUp')) {
+    next({ name: 'Profile' })
+    return
+  }
+
+  // Redirect unauthenticated users away from protected pages to SignIn
   if (to.meta.requiresAuth && !isAuthenticated) {
     next({ name: 'SignIn' })
   } else {
