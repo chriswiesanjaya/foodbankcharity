@@ -47,6 +47,7 @@ const routes = [
     name: 'SignUp',
     component: SignUpView
   },
+  // Catch-all route for undefined pages
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
@@ -62,7 +63,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated')
 
-  // Redirect authenticated users away from SignIn and SignUp
+  // Redirect authenticated users away from SignIn and SignUp to Profile
   if (isAuthenticated && (to.name === 'SignIn' || to.name === 'SignUp')) {
     next({ name: 'Profile' })
     return

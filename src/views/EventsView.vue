@@ -7,7 +7,7 @@
         <!-- Events table -->
         <div class="row text-center">
           <DataTable :value="events" tableStyle="min-width: 50rem">
-            <Column field="name" header="Name"></Column>
+            <Column field="name" header="Charity Name"></Column>
             <Column field="location" header="Location"></Column>
             <Column field="date" header="Date (DD/MM/YYYY)"></Column>
             <Column field="donation" header="Donation (AUD)"></Column>
