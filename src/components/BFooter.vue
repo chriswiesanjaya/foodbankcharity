@@ -4,7 +4,7 @@
     <footer class="row foodbank-footer py-3">
       <!-- Left Section -->
       <div class="col align-items-center justify-content-start">
-        <p><strong>FOODBANKCHARITY</strong></p>
+        <p><strong>FOOD BANK CHARITY</strong></p>
         <p>📍 Melbourne, VIC 3000</p>
         <p>✉️ hi@fbc.com</p>
         <p>📱 +61 123456789</p>
@@ -17,7 +17,7 @@
         <p>34113495</p>
         <p>FIT5032 S2 2024</p>
         <a href="https://github.com/chriswiesanjaya/foodbankcharity" target="_blank" rel="noopener">
-          GitHub Project Repo
+          GitHub Project
         </a>
       </div>
     </footer>

@@ -9,6 +9,4 @@ import BHeader from './components/BHeader.vue'
   <footer><BFooter /></footer>
 </template>
 
-<style scoped>
-/* TODO */
-</style>
+<style scoped></style>

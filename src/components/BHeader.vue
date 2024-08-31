@@ -8,7 +8,7 @@
       <!-- Center Section -->
       <div class="col text-center">
         <router-link to="/" class="foodbank-logo">
-          <h3>FOODBANKCHARITY</h3>
+          <h3>FOOD BANK CHARITY</h3>
         </router-link>
       </div>
 
@@ -69,6 +69,7 @@ import { useRouter } from 'vue-router'
 const isAuthenticated = ref(localStorage.getItem('isAuthenticated') === 'true')
 const router = useRouter()
 
+// Sign out function
 const signOut = () => {
   localStorage.removeItem('isAuthenticated')
   localStorage.removeItem('email')
