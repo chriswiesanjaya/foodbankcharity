@@ -9,10 +9,10 @@
           <DataTable :value="events" tableStyle="min-width: 50rem">
             <Column field="name" header="Name"></Column>
             <Column field="location" header="Location"></Column>
-            <Column field="date" header="Date"></Column>
-            <Column field="donation" header="Donation"></Column>
+            <Column field="date" header="Date (DD/MM/YYYY)"></Column>
+            <Column field="donation" header="Donation (AUD)"></Column>
             <Column field="volunteer" header="Volunteer"></Column>
-            <Column field="rating" header="Rating"></Column>
+            <Column field="rating" header="Rating (out of 5)"></Column>
           </DataTable>
         </div>
 
@@ -50,7 +50,7 @@
 
               <!-- Donate form amount -->
               <div class="row mb-3">
-                <label for="amount" class="form-label">Amount</label>
+                <label for="amount" class="form-label">Amount (AUD)</label>
                 <input
                   type="text"
                   class="form-control"
@@ -194,7 +194,6 @@
         </div>
 
         <!-- Forms for admin -->
-        <!-- TODO: make admin forms -->
         <div class="row">
           <div v-if="showForms.createEvent">
             <h3 class="text-center">Create an Event</h3>
@@ -424,15 +423,25 @@ const submitDonate = () => {
   // Validate form
   validateDonateAmount(true)
 
-  if (!userErrors.value.amount) {
-    // Handle submit donate success
-    // TODO: add amount to localstorage donation
-    submitMessages.value.success = 'Your donation has been submitted successfully.'
+  // Get existing local storage events
+  const events = JSON.parse(localStorage.getItem('events')) || []
+  const charity = events.find((event) => event.name === donateFormData.value.charity)
+  const donation = parseInt(donateFormData.value.amount, 10)
+
+  // Handle submit donate success
+  if (charity && !userErrors.value.amount) {
+    // Update the donation amount
+    charity.donation = (charity.donation || 0) + donation
+    localStorage.setItem('events', JSON.stringify(events))
+
+    submitMessages.value.success =
+      'Your donation has been submitted successfully. Plesae refresh the page.'
     submitMessages.value.failure = null
 
     clearForm()
-  } else {
+
     // Handle submit donate failure
+  } else {
     submitMessages.value.success = null
     submitMessages.value.failure = 'Failed to submit your donation. Please try again.'
   }
@@ -440,12 +449,27 @@ const submitDonate = () => {
 
 // Submit Volunteer function
 const submitVolunteer = () => {
-  // Handle submit volunteer success
-  // TODO: add +1 to localstorage volunteer
-  submitMessages.value.success = 'Your volunteer application has been submitted successfully.'
-  submitMessages.value.failure = null
+  // Get existing local storage events
+  const events = JSON.parse(localStorage.getItem('events')) || []
+  const charity = events.find((event) => event.name === volunteerFormData.value.charity)
 
-  clearForm()
+  // Handle submit volunteer success
+  if (charity) {
+    // Update the volunteer count
+    charity.volunteer = (charity.volunteer || 0) + 1
+    localStorage.setItem('events', JSON.stringify(events))
+
+    submitMessages.value.success =
+      'Your volunteer application has been submitted successfully. Please refresh the page.'
+    submitMessages.value.failure = null
+
+    clearForm()
+
+    // Handle submit volunteer failure
+  } else {
+    submitMessages.value.success = null
+    submitMessages.value.failure = 'Failed to submit your volunteer application. Please try again.'
+  }
 }
 
 // Submit Rate function
@@ -453,15 +477,26 @@ const submitRate = () => {
   // Validate form
   validateRateReview(true)
 
-  if (!userErrors.value.review) {
-    // Handle submit rating success
-    // TODO: add rate to localstorage rating
-    submitMessages.value.success = 'Your rating has been submitted successfully.'
+  // Get existing local storage events
+  const events = JSON.parse(localStorage.getItem('events')) || []
+  const charity = events.find((event) => event.name === rateFormData.value.charity)
+  const rating = parseInt(rateFormData.value.rate, 10)
+
+  // Handle submit rating success
+  if (charity && !userErrors.value.review) {
+    // Update the rating
+    charity.totalRating = (charity.totalRating || 0) + rating
+    charity.numberRating = (charity.numberRating || 0) + 1
+    localStorage.setItem('events', JSON.stringify(events))
+
+    submitMessages.value.success =
+      'Your rating has been submitted successfully. Please refresh the page.'
     submitMessages.value.failure = null
 
     clearForm()
-  } else {
+
     // Handle submit rating failure
+  } else {
     submitMessages.value.success = null
     submitMessages.value.failure = 'Failed to submit your rating. Please try again.'
   }
@@ -474,15 +509,17 @@ const submitCreateEvent = () => {
   validateCreateEventLocation(true)
   validateCreateEventDate(true)
 
+  // Handle submit create event success
   if (!adminErrors.value.name && !adminErrors.value.location && !adminErrors.value.date) {
-    // Handle submit create event success
     // TODO: add event to localstorage events
-    submitMessages.value.success = 'An event has been created successfully.'
+    submitMessages.value.success =
+      'An event has been created successfully. Please refresh the page.'
     submitMessages.value.failure = null
 
     clearForm()
-  } else {
+
     // Handle submit create event failure
+  } else {
     submitMessages.value.success = null
     submitMessages.value.failure = 'Failed to create an event. Please try again.'
   }

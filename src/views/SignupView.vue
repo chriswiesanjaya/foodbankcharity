@@ -113,39 +113,6 @@ const clearForm = () => {
   }
 }
 
-// Sign up function
-const signUp = () => {
-  // Validate form
-  validatePassword(true)
-  validateConfirmPassword(true)
-
-  // Get existing local storage accounts
-  const accounts = JSON.parse(localStorage.getItem('accounts')) || []
-  const user = accounts.find((account) => account.email === formData.value.email)
-
-  // Handle sign up success
-  if (!user && !errors.value.password && !errors.value.confirmPassword) {
-    signUpMessages.value.success = 'Your account has been created successfully.'
-    signUpMessages.value.failure = null
-
-    // Make new account and push to local storage
-    const newAccount = {
-      email: formData.value.email,
-      password: formData.value.password,
-      role: formData.value.role
-    }
-    accounts.push(newAccount)
-    localStorage.setItem('accounts', JSON.stringify(accounts))
-
-    clearForm()
-
-    // Handle sign up failure
-  } else {
-    signUpMessages.value.success = null
-    signUpMessages.value.failure = 'Failed to create an account. Please try again.'
-  }
-}
-
 // Validate password
 const validatePassword = (blur) => {
   const password = formData.value.password
@@ -179,6 +146,39 @@ const validateConfirmPassword = (blur) => {
     if (blur) errors.value.confirmPassword = 'Passwords do not match.'
   } else {
     errors.value.confirmPassword = null
+  }
+}
+
+// Sign up function
+const signUp = () => {
+  // Validate form
+  validatePassword(true)
+  validateConfirmPassword(true)
+
+  // Get existing local storage accounts
+  const accounts = JSON.parse(localStorage.getItem('accounts')) || []
+  const user = accounts.find((account) => account.email === formData.value.email)
+
+  // Handle sign up success
+  if (!user && !errors.value.password && !errors.value.confirmPassword) {
+    // Make new account and push to local storage
+    const newAccount = {
+      email: formData.value.email,
+      password: formData.value.password,
+      role: formData.value.role
+    }
+    accounts.push(newAccount)
+    localStorage.setItem('accounts', JSON.stringify(accounts))
+
+    signUpMessages.value.success = 'Your account has been created successfully.'
+    signUpMessages.value.failure = null
+
+    clearForm()
+
+    // Handle sign up failure
+  } else {
+    signUpMessages.value.success = null
+    signUpMessages.value.failure = 'Failed to create an account. Please try again.'
   }
 }
 </script>
