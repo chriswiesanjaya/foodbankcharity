@@ -1,5 +1,4 @@
 <template>
-  <!-- TODO -->
   <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
@@ -18,8 +17,7 @@
         </div>
 
         <!-- Buttons for user -->
-        <!-- TODO: add to class v-if="role == 'user'" -->
-        <div class="col py-5 text-center">
+        <div class="col py-5 text-center" v-if="role == 'user'">
           <!-- Donate button for user -->
           <button type="button" class="btn btn-secondary me-3" @click="toggleDonateButton">
             Donate
@@ -36,7 +34,6 @@
 
         <!-- Forms for user -->
         <!-- TODO: make user forms -->
-        <!-- TODO: add to div v-if="showForms.donate" -->
         <div class="row">
           <!-- Donate form for user -->
           <div v-if="showForms.donate">
@@ -67,33 +64,77 @@
               </div>
               <div v-if="userErrors.amount" class="text-danger mb-3">{{ userErrors.amount }}</div>
 
-              <!-- Submit Button -->
+              <!-- Donate Submit Button -->
               <div class="row mb-3">
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
 
-              <!-- Submit failure message -->
+              <!-- Donate Submit failure message -->
               <div v-if="submitMessages.failure" class="text-danger text-center">
                 {{ submitMessages.failure }}
               </div>
 
-              <!-- Submit success message -->
+              <!-- Donate Submit success message -->
               <div v-if="submitMessages.success" class="text-success text-center">
                 {{ submitMessages.success }}
               </div>
             </form>
           </div>
+
+          <!-- Volunteer form for user -->
           <div v-if="showForms.volunteer">
-            <h3>Volunteer</h3>
+            <h3 class="text-center">Volunteer</h3>
+            <form @submit.prevent="submitVolunteer">
+              <!-- Volunteer charity -->
+              <div class="row mb-3">
+                <label for="charity" class="form-label">Charity</label>
+                <select
+                  class="form-select"
+                  id="charity"
+                  v-model="volunteerFormData.charity"
+                  required
+                >
+                  <option v-for="event in events" :key="event.name" :value="event.name">
+                    {{ event.name }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Volunteer Job -->
+              <div class="row mb-3">
+                <label for="job" class="form-label">Job</label>
+                <select class="form-select" id="job" v-model="volunteerFormData.job" required>
+                  <option value="food-purchasing">Food Purchasing</option>
+                  <option value="food-processing">Food Processing</option>
+                  <option value="food-distribution">Food Distribution</option>
+                </select>
+              </div>
+
+              <!-- Volunteer Submit Button -->
+              <div class="row mb-3">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+
+              <!-- Volunteer Submit failure message -->
+              <div v-if="submitMessages.failure" class="text-danger text-center">
+                {{ submitMessages.failure }}
+              </div>
+
+              <!-- Volunteer Submit success message -->
+              <div v-if="submitMessages.success" class="text-success text-center">
+                {{ submitMessages.success }}
+              </div>
+            </form>
           </div>
+
+          <!-- Rate form for user -->
           <div v-if="showForms.rate">
             <h3>Rate</h3>
           </div>
         </div>
 
         <!-- Buttons for admin -->
-        <!-- TODO: add to class v-if="role == 'admin'" -->
-        <div class="col py-5 text-center">
+        <div class="col py-5 text-center" v-if="role == 'admin'">
           <!-- Create Event button for user -->
           <button type="button" class="btn btn-secondary" @click="toggleCreateEventButton">
             Create Event
@@ -220,16 +261,25 @@ const submitDonate = () => {
   validateDonateAmount(true)
 
   if (!userErrors.value.amount) {
-    // Handle submit success
+    // Handle submit donate success
+    // TODO: add amount to localstorage donation
     submitMessages.value.success = 'Your donation has been submitted successfully.'
     submitMessages.value.failure = null
 
     clearForm()
   } else {
-    // Handle submit failure
+    // Handle submit donate failure
     submitMessages.value.success = null
     submitMessages.value.failure = 'Failed to submit your donation. Please try again.'
   }
+}
+
+// Submit volunteer function
+const submitVolunteer = () => {
+  // Handle submit volunteer success
+  // TODO: add +1 to localstorage volunteer
+  submitMessages.value.success = 'Your volunteer application has been submitted successfully.'
+  submitMessages.value.failure = null
 }
 
 // Errors for user
