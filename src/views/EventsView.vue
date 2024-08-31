@@ -18,7 +18,7 @@
         </div>
 
         <!-- Buttons for user -->
-        <!-- TODO: add  v-if="role == 'user'" -->
+        <!-- TODO: add to class v-if="role == 'user'" -->
         <div class="col py-5 text-center">
           <button
             type="button"
@@ -48,7 +48,7 @@
         </div>
 
         <!-- Buttons for admin -->
-        <!-- TODO: add v-if="role == 'admin'" -->
+        <!-- TODO: add to class v-if="role == 'admin'" -->
         <div class="col py-5 text-center">
           <button
             type="button"
