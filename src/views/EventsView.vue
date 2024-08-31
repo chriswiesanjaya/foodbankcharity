@@ -198,7 +198,7 @@
         <div class="row">
           <div v-if="showForms.createEvent">
             <h3 class="text-center">Create an Event</h3>
-            <form>
+            <form @submit.prevent="submitCreateEvent">
               <!-- Create Event form name -->
               <div class="row mb-3">
                 <label for="name" class="form-label">Name</label>
@@ -229,8 +229,37 @@
               </div>
               <div v-if="adminErrors.location" class="text-danger mb-3">
                 {{ adminErrors.location }}
+              </div>
 
-                <!-- Create Event form date -->
+              <!-- Create Event form date -->
+              <div class="row mb-3">
+                <label for="date" class="form-label">Date</label>
+                <DatePicker
+                  id="date"
+                  v-model="createEventFormData.date"
+                  dateFormat="dd/mm/yy"
+                  required
+                  @blur="() => validateCreateEventDate(true)"
+                  @input="() => validateCreateEventDate(false)"
+                />
+              </div>
+              <div v-if="adminErrors.date" class="text-danger mb-3">
+                {{ adminErrors.date }}
+              </div>
+
+              <!-- Create Event form Submit Button -->
+              <div class="row mb-3">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+
+              <!-- Create Event form Submit failure message -->
+              <div v-if="submitMessages.failure" class="text-danger text-center">
+                {{ submitMessages.failure }}
+              </div>
+
+              <!-- Create Event form Submit success message -->
+              <div v-if="submitMessages.success" class="text-success text-center">
+                {{ submitMessages.success }}
               </div>
             </form>
           </div>
@@ -244,6 +273,7 @@
 import { ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import DatePicker from 'primevue/datepicker'
 
 const role = localStorage.getItem('role')
 const storedEvents = ref(JSON.parse(localStorage.getItem('events')) || [])
@@ -378,7 +408,18 @@ const validateCreateEventLocation = (blur) => {
   }
 }
 
-// Submit donate function
+// Validate create event date
+const validateCreateEventDate = (blur) => {
+  const date = createEventFormData.value.date
+
+  if (!date) {
+    if (blur) adminErrors.value.date = 'Date is required.'
+  } else {
+    adminErrors.value.date = null
+  }
+}
+
+// Submit Donate function
 const submitDonate = () => {
   // Validate form
   validateDonateAmount(true)
@@ -397,7 +438,7 @@ const submitDonate = () => {
   }
 }
 
-// Submit volunteer function
+// Submit Volunteer function
 const submitVolunteer = () => {
   // Handle submit volunteer success
   // TODO: add +1 to localstorage volunteer
@@ -407,7 +448,7 @@ const submitVolunteer = () => {
   clearForm()
 }
 
-// Submit rate function
+// Submit Rate function
 const submitRate = () => {
   // Validate form
   validateRateReview(true)
@@ -423,6 +464,27 @@ const submitRate = () => {
     // Handle submit rating failure
     submitMessages.value.success = null
     submitMessages.value.failure = 'Failed to submit your rating. Please try again.'
+  }
+}
+
+// Submit Create Event function
+const submitCreateEvent = () => {
+  // Validate form
+  validateCreateEventName(true)
+  validateCreateEventLocation(true)
+  validateCreateEventDate(true)
+
+  if (!adminErrors.value.name && !adminErrors.value.location && !adminErrors.value.date) {
+    // Handle submit create event success
+    // TODO: add event to localstorage events
+    submitMessages.value.success = 'An event has been created successfully.'
+    submitMessages.value.failure = null
+
+    clearForm()
+  } else {
+    // Handle submit create event failure
+    submitMessages.value.success = null
+    submitMessages.value.failure = 'Failed to create an event. Please try again.'
   }
 }
 
