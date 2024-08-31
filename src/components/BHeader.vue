@@ -64,7 +64,9 @@ const signOut = () => {
   localStorage.removeItem('email')
   localStorage.removeItem('role')
   isAuthenticated.value = false
-  router.push('/signin')
+  router.push('/signin').then(() => {
+    window.location.reload()
+  })
 }
 </script>
 
