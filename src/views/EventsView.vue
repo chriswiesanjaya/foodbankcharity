@@ -18,17 +18,51 @@
         </div>
 
         <!-- Buttons for user -->
-        <!-- add  v-if="role == 'user'" -->
+        <!-- TODO: add  v-if="role == 'user'" -->
         <div class="col py-5 text-center">
-          <button type="button" class="btn btn-secondary me-3">Donate</button>
-          <button type="button" class="btn btn-secondary me-3">Volunteer</button>
-          <button type="button" class="btn btn-secondary">Rate</button>
+          <button
+            type="button"
+            class="btn btn-secondary me-3"
+            @click="showForms.donate = !showForms.donate"
+          >
+            Donate
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary me-3"
+            @click="showForms.volunteer = !showForms.volunteer"
+          >
+            Volunteer
+          </button>
+          <button type="button" class="btn btn-secondary" @click="showForms.rate = !showForms.rate">
+            Rate
+          </button>
+        </div>
+
+        <!-- Forms for user -->
+        <!-- TODO: make user forms -->
+        <div class="row text-center">
+          <h1 v-if="showForms.donate">DONATION</h1>
+          <h1 v-if="showForms.volunteer">VOLUNTEER</h1>
+          <h1 v-if="showForms.rate">RATE</h1>
         </div>
 
         <!-- Buttons for admin -->
-        <!-- add v-if="role == 'admin'" -->
+        <!-- TODO: add v-if="role == 'admin'" -->
         <div class="col py-5 text-center">
-          <button type="button" class="btn btn-secondary me-3">Create Event</button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            @click="showForms.createEvent = !showForms.createEvent"
+          >
+            Create Event
+          </button>
+        </div>
+
+        <!-- Forms for admin -->
+        <!-- TODO: make admin forms -->
+        <div class="row text-center">
+          <h1 v-if="showForms.createEvent">CREATE EVENT</h1>
         </div>
       </div>
     </div>
@@ -56,7 +90,7 @@ const showForms = ref({
   donate: false,
   volunteer: false,
   rate: false,
-  create: false
+  createEvent: false
 })
 </script>
 
