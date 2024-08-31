@@ -158,14 +158,17 @@ const signUp = () => {
   // Get existing local storage accounts
   const accounts = JSON.parse(localStorage.getItem('accounts')) || []
   const user = accounts.find((account) => account.email === formData.value.email)
+  const email = formData.value.email
+  const password = formData.value.password
+  const role = formData.value.role
 
   // Handle sign up success
   if (!user && !errors.value.password && !errors.value.confirmPassword) {
-    // Make new account and push to local storage
+    // Make a new account and push to local storage
     const newAccount = {
-      email: formData.value.email,
-      password: formData.value.password,
-      role: formData.value.role
+      email: email,
+      password: password,
+      role: role
     }
     accounts.push(newAccount)
     localStorage.setItem('accounts', JSON.stringify(accounts))

@@ -509,9 +509,27 @@ const submitCreateEvent = () => {
   validateCreateEventLocation(true)
   validateCreateEventDate(true)
 
+  // Get existing local storage events
+  const events = JSON.parse(localStorage.getItem('events')) || []
+  const name = createEventFormData.value.name
+  const location = createEventFormData.value.location
+  const date = formatDate(createEventFormData.value.date)
+
   // Handle submit create event success
   if (!adminErrors.value.name && !adminErrors.value.location && !adminErrors.value.date) {
-    // TODO: add event to localstorage events
+    // Make a new event and push to local storage
+    const newEvent = {
+      name: name,
+      location: location,
+      date: date,
+      donation: 0,
+      volunteer: 0,
+      totalRating: 0,
+      numberRating: 0
+    }
+    events.push(newEvent)
+    localStorage.setItem('events', JSON.stringify(events))
+
     submitMessages.value.success =
       'An event has been created successfully. Please refresh the page.'
     submitMessages.value.failure = null
@@ -568,6 +586,7 @@ const clearForm = () => {
   }
 }
 
+// Clear messages
 const clearMessages = () => {
   userErrors.value = {
     charity: null,
@@ -585,6 +604,15 @@ const clearMessages = () => {
     success: null,
     failure: null
   }
+}
+
+// Format date from ISO to DD/MM/YYYY
+const formatDate = (dateString) => {
+  const date = new Date(dateString)
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = date.getFullYear()
+  return `${day}/${month}/${year}`
 }
 </script>
 

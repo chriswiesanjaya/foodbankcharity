@@ -46,22 +46,6 @@ const routes = [
     path: '/signup',
     name: 'SignUp',
     component: SignUpView
-  },
-  {
-    path: '/donate',
-    name: 'Donate'
-  },
-  {
-    path: '/volunteer',
-    name: 'Volunteer'
-  },
-  {
-    path: '/rating',
-    name: 'Rating'
-  },
-  {
-    path: '/create-event',
-    name: 'CreateEvent'
   }
 ]
 
