@@ -435,7 +435,7 @@ const submitDonate = () => {
     localStorage.setItem('events', JSON.stringify(events))
 
     submitMessages.value.success =
-      'Your donation has been submitted successfully. Plesae refresh the page.'
+      'Your donation has been submitted successfully. Please refresh the page.'
     submitMessages.value.failure = null
 
     clearForm()
