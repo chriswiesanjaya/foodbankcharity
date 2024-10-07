@@ -1,8 +1,51 @@
 <template>
-  <h1>Sign In</h1>
-  <p><input type="text" placeholder="Email" v-model="email" /></p>
-  <p><input type="password" placeholder="Password" v-model="password" /></p>
-  <p><button @click="signIn">Sign in via Firebase</button></p>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <!-- Login Form -->
+        <h1 class="text-center">Firebase Login</h1>
+        <form @submit.prevent="login">
+          <!-- Email -->
+          <div class="row mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              placeholder="Email"
+              v-model="email"
+              required
+            />
+          </div>
+
+          <!-- Password -->
+          <div class="row mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              placeholder="Password"
+              v-model="password"
+              required
+            />
+          </div>
+
+          <!-- Login Button -->
+          <div class="row mb-3">
+            <button type="submit" class="btn btn-primary">Login</button>
+          </div>
+
+          <!-- Register Navigation -->
+          <div class="text-center mb-3">
+            Don't have an account?
+            <router-link to="/FirebaseRegister" class="text-primary"> Register</router-link>
+          </div>
+          <div v-if="errorMessage" class="text-danger text-center">{{ errorMessage }}</div>
+        </form>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -14,10 +57,12 @@ import { collection, query, where, getDocs } from 'firebase/firestore'
 
 const email = ref('')
 const password = ref('')
+const errorMessage = ref('')
 const router = useRouter()
 const auth = getAuth()
 
-const signIn = async () => {
+// Login function
+const login = async () => {
   try {
     // Sign in with Firebase Authentication
     const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value)
@@ -26,19 +71,28 @@ const signIn = async () => {
     // Fetch user role from Firestore
     const q = query(collection(db, 'users'), where('email', '==', user.email))
     const querySnapshot = await getDocs(q)
-
     let userRole = 'Role not found'
     querySnapshot.forEach((doc) => {
       const data = doc.data()
       userRole = data.role || 'Role not found'
     })
 
-    console.log('Firebase Sign In Successful!')
+    // Successful login console
+    console.log('Firebase Login Successful!')
     console.log(auth.currentUser)
     console.log('User Role:', userRole)
-    router.push('/')
+
+    // Successful login local storage
+    localStorage.setItem('isAuthenticated', 'true')
+    localStorage.setItem('email', user.email)
+    localStorage.setItem('role', userRole)
+    router.push('/profile').then(() => {
+      window.location.reload()
+    })
   } catch (error) {
-    console.error('Error signing in:', error.message)
+    // Unsucessful login
+    console.error('Firebase Login Error:', error.message)
+    errorMessage.value = 'Email or password is incorrect.'
   }
 }
 </script>
