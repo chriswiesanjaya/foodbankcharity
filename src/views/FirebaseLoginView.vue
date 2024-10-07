@@ -55,11 +55,13 @@ import { useRouter } from 'vue-router'
 import db from '../firebase/init.js'
 import { collection, query, where, getDocs } from 'firebase/firestore'
 
+const router = useRouter()
+const auth = getAuth()
+
+// Form data
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
-const router = useRouter()
-const auth = getAuth()
 
 // Login function
 const login = async () => {
@@ -77,7 +79,7 @@ const login = async () => {
       userRole = data.role || 'Role not found'
     })
 
-    // Successful login console
+    // Successful login message
     console.log('Firebase Login Successful!')
     console.log(auth.currentUser)
     console.log('User Role:', userRole)
@@ -90,9 +92,19 @@ const login = async () => {
       window.location.reload()
     })
   } catch (error) {
-    // Unsucessful login
+    // Unsucessful login message
     console.error('Firebase Login Error:', error.message)
     errorMessage.value = 'Email or password is incorrect.'
   }
 }
 </script>
+
+<style scoped>
+.container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 80vw;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 10px;
+}
+</style>
