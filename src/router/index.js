@@ -6,8 +6,8 @@ import EventsView from '@/views/EventsView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
-import FirebaseSignInView from '@/views/FirebaseSignInView.vue'
-import FirebaseSignUpView from '@/views/FirebaseSignUpView.vue'
+import FirebaseLoginView from '@/views/FirebaseLoginView.vue'
+import FirebaseRegisterView from '@/views/FirebaseRegisterView.vue'
 
 const routes = [
   {
@@ -50,14 +50,14 @@ const routes = [
     component: RegisterView
   },
   {
-    path: '/FirebaseSignIn',
-    name: 'Firebase Sign In',
-    component: FirebaseSignInView
+    path: '/FirebaseLogin',
+    name: 'Firebase Login',
+    component: FirebaseLoginView
   },
   {
-    path: '/FirebaseSignUp',
-    name: 'Firebase Sign Up',
-    component: FirebaseSignUpView
+    path: '/FirebaseRegister',
+    name: 'Firebase Register',
+    component: FirebaseRegisterView
   },
   // Catch-all route for undefined pages
   {
