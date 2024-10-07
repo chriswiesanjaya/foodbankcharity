@@ -7,7 +7,6 @@
         <form @submit.prevent="register">
           <!-- Email -->
           <div class="row mb-3">
-            <label for="email" class="form-label">Email</label>
             <input
               type="email"
               class="form-control"
@@ -20,7 +19,6 @@
 
           <!-- Password -->
           <div class="row mb-3">
-            <label for="password" class="form-label">Password</label>
             <input
               type="password"
               class="form-control"
@@ -38,7 +36,6 @@
 
           <!-- Confirm Password -->
           <div class="row mb-3">
-            <label for="confirm-password" class="form-label">Confirm Password</label>
             <input
               type="password"
               class="form-control"
@@ -56,7 +53,7 @@
 
           <!-- Register Button -->
           <div class="row mb-3">
-            <button type="submit" class="btn btn-primary">Register</button>
+            <button type="submit" class="btn btn-primary">Register and Login</button>
           </div>
 
           <!-- Register failure message -->
@@ -72,7 +69,7 @@
           <!-- Login Navigation -->
           <div class="text-center mb-3">
             Already have an account?
-            <router-link to="/login" class="text-primary"> Login</router-link>
+            <router-link to="/FirebaseLogin" class="text-primary"> Login</router-link>
           </div>
         </form>
       </div>
@@ -81,11 +78,18 @@
 </template>
 
 <script setup>
+// import { ref } from 'vue'
+// import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+// import db from '../firebase/init.js'
+// import { collection, addDoc } from 'firebase/firestore'
+
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
 import db from '../firebase/init.js'
-import { collection, addDoc } from 'firebase/firestore'
+import { collection, addDoc, query, where, getDocs } from 'firebase/firestore'
 
+const router = useRouter()
 const auth = getAuth()
 
 // Form data
@@ -155,6 +159,14 @@ const validateConfirmPassword = (blur) => {
   }
 }
 
+// Check if email exists in Firestore
+const isEmailExistsInFirestore = async (email) => {
+  const usersRef = collection(db, 'users')
+  const q = query(usersRef, where('email', '==', email))
+  const querySnapshot = await getDocs(q)
+  return !querySnapshot.empty
+}
+
 // Register function
 const register = async () => {
   // Validate form
@@ -171,18 +183,32 @@ const register = async () => {
         formData.value.password
       )
       const user = userCredential.user
+      const role = 'user'
 
       // Store the user's role in Firestore
-      await addDoc(collection(db, 'users'), {
-        email: user.email,
-        role: 'user'
-      })
+      if (!(await isEmailExistsInFirestore(user.email))) {
+        await addDoc(collection(db, 'users'), {
+          email: user.email,
+          role: role
+        })
+      }
 
       // Successful register message
       console.log('Firebase Register as', user.email, 'is Successful!')
       registerMessages.value.success = 'Your account has been created successfully.'
       registerMessages.value.failure = null
+
+      // Successful register local storage
+      localStorage.setItem('email', user.email)
+      localStorage.setItem('role', role)
+      localStorage.setItem('isAuthenticated', 'true')
+
       clearForm()
+
+      // Redirect to /profile
+      router.push('/profile').then(() => {
+        window.location.reload()
+      })
     }
     // Unsucessful register message
   } catch (error) {

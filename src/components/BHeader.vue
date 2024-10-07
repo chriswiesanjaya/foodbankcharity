@@ -16,19 +16,19 @@
       <div class="col text-end">
         <!-- Regular Login / Logout Button -->
         <router-link v-if="!isAuthenticated" to="/login" class="btn btn-primary">Login</router-link>
-        <button v-if="isAuthenticated" @click="logOut" class="btn btn-secondary">Logout</button>
+        <button v-if="isAuthenticated" @click="logout1" class="btn btn-secondary">Logout</button>
 
         <!-- Firebase Login / Logout Button -->
         <router-link v-if="!isAuthenticated" to="/FirebaseLogin" class="btn btn-primary"
           >Firebase Sign In</router-link
         >
-        <button v-if="isAuthenticated" @click="logOut" class="btn btn-secondary">
+        <button v-if="isAuthenticated" @click="logout" class="btn btn-secondary">
           Firebase Sign Out
         </button>
       </div>
     </div>
 
-    <!-- Navigation Header-->
+    <!-- Navigation Header -->
     <header class="row nav-header py-3" v-if="isAuthenticated">
       <ul class="nav nav-pills justify-content-between">
         <!-- Profile Navigation -->
@@ -58,15 +58,42 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
+import { getAuth, signOut } from 'firebase/auth'
+
+const router = useRouter()
+const auth = getAuth()
 
 const isAuthenticated = ref(localStorage.getItem('isAuthenticated') === 'true')
-const router = useRouter()
+
+// Firebase Log Out
+const logout = () => {
+  signOut(auth)
+    .then((data) => {
+      // Remove email and role in local storage
+      isAuthenticated.value = false
+      localStorage.removeItem('email')
+      localStorage.removeItem('role')
+      localStorage.removeItem('isAuthenticated')
+
+      // Successful logout message
+      console.log('Firebase Sign Out Successful!')
+      console.log(auth.currentUser)
+
+      // Redirect to /FirebaseLogin
+      router.push('/FirebaseLogin').then(() => {
+        window.location.reload()
+      })
+    })
+    // Unsuccessful logout message
+    .catch((error) => {
+      console.log(error.code)
+    })
+}
 
 // Log out function
-const logOut = () => {
+const logout1 = () => {
   localStorage.removeItem('isAuthenticated')
   localStorage.removeItem('email')
   localStorage.removeItem('role')

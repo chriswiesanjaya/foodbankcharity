@@ -51,12 +51,12 @@ const routes = [
   },
   {
     path: '/FirebaseLogin',
-    name: 'Firebase Login',
+    name: 'FirebaseLogin',
     component: FirebaseLoginView
   },
   {
     path: '/FirebaseRegister',
-    name: 'Firebase Register',
+    name: 'FirebaseRegister',
     component: FirebaseRegisterView
   },
   // Catch-all route for undefined pages
@@ -81,9 +81,15 @@ router.beforeEach((to, from, next) => {
     return
   }
 
+  // Redirect authenticated users away from Login and Register to Profile
+  if (isAuthenticated && (to.name === 'FirebaseLogin' || to.name === 'FirebaseRegister')) {
+    next({ name: 'Profile' })
+    return
+  }
+
   // Redirect unauthenticated users away from protected pages to Login
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next({ name: 'Login' })
+    next({ name: 'FirebaseLogin' })
   } else {
     next()
   }

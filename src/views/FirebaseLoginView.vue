@@ -7,7 +7,6 @@
         <form @submit.prevent="login">
           <!-- Email -->
           <div class="row mb-3">
-            <label for="email" class="form-label">Email</label>
             <input
               type="email"
               class="form-control"
@@ -20,7 +19,6 @@
 
           <!-- Password -->
           <div class="row mb-3">
-            <label for="password" class="form-label">Password</label>
             <input
               type="password"
               class="form-control"
@@ -73,21 +71,23 @@ const login = async () => {
     // Fetch user role from Firestore
     const q = query(collection(db, 'users'), where('email', '==', user.email))
     const querySnapshot = await getDocs(q)
-    let userRole = 'Role not found'
+    let role = 'user'
     querySnapshot.forEach((doc) => {
       const data = doc.data()
-      userRole = data.role || 'Role not found'
+      role = data.role || 'user'
     })
 
     // Successful login message
     console.log('Firebase Login Successful!')
     console.log(auth.currentUser)
-    console.log('User Role:', userRole)
+    console.log('User Role:', role)
 
     // Successful login local storage
-    localStorage.setItem('isAuthenticated', 'true')
     localStorage.setItem('email', user.email)
-    localStorage.setItem('role', userRole)
+    localStorage.setItem('role', role)
+    localStorage.setItem('isAuthenticated', 'true')
+
+    // Redirect to /profile
     router.push('/profile').then(() => {
       window.location.reload()
     })
