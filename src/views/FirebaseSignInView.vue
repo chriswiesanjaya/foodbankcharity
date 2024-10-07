@@ -2,7 +2,7 @@
   <h1>Sign In</h1>
   <p><input type="text" placeholder="Email" v-model="email" /></p>
   <p><input type="password" placeholder="Password" v-model="password" /></p>
-  <p><button @click="signin">Sign in via Firebase</button></p>
+  <p><button @click="signIn">Sign in via Firebase</button></p>
 </template>
 
 <script setup>
@@ -17,7 +17,7 @@ const password = ref('')
 const router = useRouter()
 const auth = getAuth()
 
-const signin = async () => {
+const signIn = async () => {
   try {
     // Sign in with Firebase Authentication
     const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value)
