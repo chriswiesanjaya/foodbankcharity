@@ -2,9 +2,9 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
-        <!-- Sign In Form -->
-        <h1 class="text-center">Sign In</h1>
-        <form @submit.prevent="signIn">
+        <!-- Login Form -->
+        <h1 class="text-center">Login</h1>
+        <form @submit.prevent="login">
           <!-- Email -->
           <div class="row mb-3">
             <label for="email" class="form-label">Email</label>
@@ -17,15 +17,15 @@
             <input type="password" class="form-control" id="password" v-model="password" required />
           </div>
 
-          <!-- Sign In Button -->
+          <!-- Login Button -->
           <div class="row mb-3">
-            <button type="submit" class="btn btn-primary">Sign In</button>
+            <button type="submit" class="btn btn-primary">Login</button>
           </div>
 
-          <!-- Sign Up Navigation -->
+          <!-- Register Navigation -->
           <div class="text-center mb-3">
             Don't have an account?
-            <router-link to="/signup" class="text-primary"> Sign up</router-link>
+            <router-link to="/register" class="text-primary"> Register</router-link>
           </div>
           <div v-if="error" class="text-danger text-center">{{ error }}</div>
         </form>
@@ -43,8 +43,8 @@ const password = ref('')
 const error = ref('')
 const router = useRouter()
 
-// Sign in function
-const signIn = () => {
+// Login function
+const login = () => {
   const accounts = JSON.parse(localStorage.getItem('accounts')) || []
   const user = accounts.find((account) => account.email === email.value)
 

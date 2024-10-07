@@ -2,9 +2,9 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
-        <!-- Sign Up Form -->
-        <h1 class="text-center">Sign Up</h1>
-        <form @submit.prevent="signUp">
+        <!-- Register Form -->
+        <h1 class="text-center">Register</h1>
+        <form @submit.prevent="register">
           <!-- Email -->
           <div class="row mb-3">
             <label for="email" class="form-label">Email</label>
@@ -52,25 +52,25 @@
             </select>
           </div>
 
-          <!-- Sign Up Button -->
+          <!-- Register Button -->
           <div class="row mb-3">
-            <button type="submit" class="btn btn-primary">Sign Up</button>
+            <button type="submit" class="btn btn-primary">Register</button>
           </div>
 
-          <!-- Sign Up failure message -->
-          <div v-if="signUpMessages.failure" class="text-danger text-center">
-            {{ signUpMessages.failure }}
+          <!-- Register failure message -->
+          <div v-if="registerMessages.failure" class="text-danger text-center">
+            {{ registerMessages.failure }}
           </div>
 
-          <!-- Sign Up success message -->
-          <div v-if="signUpMessages.success" class="text-success text-center">
-            {{ signUpMessages.success }}
+          <!-- Register success message -->
+          <div v-if="registerMessages.success" class="text-success text-center">
+            {{ registerMessages.success }}
           </div>
 
-          <!-- Sign In Navigation -->
+          <!-- Login Navigation -->
           <div class="text-center mb-3">
             Already have an account?
-            <router-link to="/signin" class="text-primary"> Sign in</router-link>
+            <router-link to="/login" class="text-primary"> Login</router-link>
           </div>
         </form>
       </div>
@@ -97,8 +97,8 @@ const errors = ref({
   role: null
 })
 
-// Sign Up messages
-const signUpMessages = ref({
+// Register messages
+const registerMessages = ref({
   success: null,
   failure: null
 })
@@ -149,8 +149,8 @@ const validateConfirmPassword = (blur) => {
   }
 }
 
-// Sign up function
-const signUp = () => {
+// Register function
+const register = () => {
   // Validate form
   validatePassword(true)
   validateConfirmPassword(true)
@@ -162,7 +162,7 @@ const signUp = () => {
   const password = formData.value.password
   const role = formData.value.role
 
-  // Handle sign up success
+  // Handle Register success
   if (!user && !errors.value.password && !errors.value.confirmPassword) {
     // Make a new account and push to local storage
     const newAccount = {
@@ -173,15 +173,15 @@ const signUp = () => {
     accounts.push(newAccount)
     localStorage.setItem('accounts', JSON.stringify(accounts))
 
-    signUpMessages.value.success = 'Your account has been created successfully.'
-    signUpMessages.value.failure = null
+    registerMessages.value.success = 'Your account has been created successfully.'
+    registerMessages.value.failure = null
 
     clearForm()
 
-    // Handle sign up failure
+    // Handle register failure
   } else {
-    signUpMessages.value.success = null
-    signUpMessages.value.failure = 'Failed to create an account. Please try again.'
+    registerMessages.value.success = null
+    registerMessages.value.failure = 'Failed to create an account. Please try again.'
   }
 }
 </script>

@@ -21,7 +21,7 @@ import { collection, addDoc } from 'firebase/firestore'
 
 const email = ref('')
 const password = ref('')
-const role = ref('member')
+const role = ref('user')
 const router = useRouter()
 const auth = getAuth()
 

@@ -4,8 +4,10 @@ import AboutUsView from '../views/AboutUsView.vue'
 import ContactUsView from '@/views/ContactUsView.vue'
 import EventsView from '@/views/EventsView.vue'
 import ProfileView from '@/views/ProfileView.vue'
-import SignInView from '@/views/SignInView.vue'
-import SignUpView from '@/views/SignUpView.vue'
+import LoginView from '@/views/LoginView.vue'
+import RegisterView from '@/views/RegisterView.vue'
+import FirebaseSignInView from '@/views/FirebaseSignInView.vue'
+import FirebaseSignUpView from '@/views/FirebaseSignUpView.vue'
 
 const routes = [
   {
@@ -38,14 +40,24 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/signin',
-    name: 'SignIn',
-    component: SignInView
+    path: '/login',
+    name: 'Login',
+    component: LoginView
   },
   {
-    path: '/signup',
-    name: 'SignUp',
-    component: SignUpView
+    path: '/register',
+    name: 'Register',
+    component: RegisterView
+  },
+  {
+    path: '/FirebaseSignIn',
+    name: 'Firebase Sign In',
+    component: FirebaseSignInView
+  },
+  {
+    path: '/FirebaseSignUp',
+    name: 'Firebase Sign Up',
+    component: FirebaseSignUpView
   },
   // Catch-all route for undefined pages
   {
@@ -63,15 +75,15 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated')
 
-  // Redirect authenticated users away from SignIn and SignUp to Profile
-  if (isAuthenticated && (to.name === 'SignIn' || to.name === 'SignUp')) {
+  // Redirect authenticated users away from Login and Register to Profile
+  if (isAuthenticated && (to.name === 'Login' || to.name === 'Register')) {
     next({ name: 'Profile' })
     return
   }
 
-  // Redirect unauthenticated users away from protected pages to SignIn
+  // Redirect unauthenticated users away from protected pages to Login
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next({ name: 'SignIn' })
+    next({ name: 'Login' })
   } else {
     next()
   }
