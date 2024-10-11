@@ -16,7 +16,7 @@
         <p><strong>Christian Wiesanjaya</strong></p>
         <p>34113495</p>
         <p>FIT5032 S2 2024</p>
-        <p>A2: Basic Web App</p>
+        <p>A3: Advanced Web App</p>
         <a href="https://github.com/chriswiesanjaya/foodbankcharity" target="_blank" rel="noopener">
           GitHub Project
         </a>
