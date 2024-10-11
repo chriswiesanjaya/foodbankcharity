@@ -15,16 +15,14 @@
       <!-- Right Section -->
       <div class="col text-end">
         <!-- Regular Login / Logout Button -->
-        <router-link v-if="!isAuthenticated" to="/login" class="btn btn-primary">Login</router-link>
-        <button v-if="isAuthenticated" @click="logout1" class="btn btn-secondary">Logout</button>
+        <!-- <router-link v-if="!isAuthenticated" to="/login" class="btn btn-primary">Login</router-link>
+        <button v-if="isAuthenticated" @click="logout1" class="btn btn-secondary">Logout</button> -->
 
         <!-- Firebase Login / Logout Button -->
         <router-link v-if="!isAuthenticated" to="/FirebaseLogin" class="btn btn-primary"
-          >Firebase Sign In</router-link
+          >Login</router-link
         >
-        <button v-if="isAuthenticated" @click="logout" class="btn btn-secondary">
-          Firebase Sign Out
-        </button>
+        <button v-if="isAuthenticated" @click="logout" class="btn btn-secondary">Logout</button>
       </div>
     </div>
 
