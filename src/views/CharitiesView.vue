@@ -332,6 +332,9 @@ const adminErrors = ref({ name: null, location: null })
 
 // Firebase Functions
 const submitDonateFunction = 'https://submitdonation-ltpm7ejipa-uc.a.run.app'
+const submitVolunteerFunction = 'https://submitvolunteer-ltpm7ejipa-uc.a.run.app'
+const submitRateFunction = 'https://submitrate-ltpm7ejipa-uc.a.run.app'
+const submitCreateCharityFunction = 'https://submitcreatecharity-ltpm7ejipa-uc.a.run.app'
 
 const fetchCharities = async () => {
   const querySnapshot = await getDocs(collection(db, 'charities'))
@@ -482,7 +485,7 @@ const submitDonate = async () => {
   try {
     if (userErrors.value.amount) {
       submitMessages.value.success = null
-      submitMessages.value.failure = 'Donation failed! Please enter a valid amount and try again.'
+      submitMessages.value.failure = 'Donation failed! Please enter a valid amount.'
       return
     }
 
@@ -500,26 +503,16 @@ const submitDonate = async () => {
   }
 }
 
-// Submit Volunteer functions
+// Submit Volunteer function
 const submitVolunteer = async () => {
-  const charity = volunteerFormData.value.charity
+  const name = volunteerFormData.value.charity
 
   try {
-    const q = query(collection(db, 'charities'), where('name', '==', charity))
-    const querySnapshot = await getDocs(q)
-
-    if (querySnapshot.empty) {
-      submitMessages.value.success = null
-      submitMessages.value.failure = 'Charity not found.'
-      return
-    }
-    const docRef = querySnapshot.docs[0].ref
-
-    await updateDoc(docRef, {
-      volunteer: increment(1)
+    const response = await axios.post(submitVolunteerFunction, {
+      name
     })
 
-    submitMessages.value.success = 'Volunteer application successful! Refresh the page.'
+    submitMessages.value.success = response.data
     submitMessages.value.failure = null
     clearForm()
   } catch (error) {
@@ -528,28 +521,18 @@ const submitVolunteer = async () => {
   }
 }
 
-// Submit Rate functions
+// Submit Rate function
 const submitRate = async () => {
-  const charity = rateFormData.value.charity
+  const name = rateFormData.value.charity
   const rating = parseInt(rateFormData.value.rate, 10)
 
   try {
-    const q = query(collection(db, 'charities'), where('name', '==', charity))
-    const querySnapshot = await getDocs(q)
-
-    if (querySnapshot.empty) {
-      submitMessages.value.success = null
-      submitMessages.value.failure = 'Charity not found.'
-      return
-    }
-    const docRef = querySnapshot.docs[0].ref
-
-    await updateDoc(docRef, {
-      totalRating: increment(rating),
-      numberRating: increment(1)
+    const response = await axios.post(submitRateFunction, {
+      name,
+      rating
     })
 
-    submitMessages.value.success = 'Rating successful! Refresh the page.'
+    submitMessages.value.success = response.data
     submitMessages.value.failure = null
     clearForm()
   } catch (error) {
@@ -558,6 +541,7 @@ const submitRate = async () => {
   }
 }
 
+// Submit Create Charity function
 const submitCreateCharity = async () => {
   validateCreateCharityName(true)
   validateCreateCharityLocation(true)
@@ -565,33 +549,32 @@ const submitCreateCharity = async () => {
   const location = createCharityFormData.value.location
 
   try {
-    const querySnapshot = await getDocs(
-      query(collection(db, 'charities'), where('name', '==', name))
-    )
-
-    if (!querySnapshot.empty) {
-      submitMessages.value.failure = 'Charity with this name already exists!'
+    if (adminErrors.value.name || adminErrors.value.location) {
+      submitMessages.value.success = null
+      submitMessages.value.failure =
+        'Create charity failed! Please enter a valid name and location.'
       return
     }
 
-    await addDoc(collection(db, 'charities'), {
-      name: name,
-      location: location,
-      donation: 0,
-      volunteer: 0,
-      totalRating: 0,
-      numberRating: 0
+    const response = await axios.post(submitCreateCharityFunction, {
+      name,
+      location
     })
 
-    submitMessages.value.success = 'Charity creation successful! Refresh the page.'
+    submitMessages.value.success = response.data
     submitMessages.value.failure = null
     clearForm()
   } catch (error) {
+    if (error.response && error.response.status === 409) {
+      submitMessages.value.failure = 'Charity with this name already exists!'
+    } else {
+      submitMessages.value.failure = 'Charity creation failed! Try again.'
+    }
     submitMessages.value.success = null
-    submitMessages.value.failure = 'Charity creation failed! Try again.'
   }
 }
 
+// Submit Modify Charity function
 const submitModifyCharity = async () => {
   validateModifyCharityName(true)
   validateModifyCharityLocation(true)
@@ -624,7 +607,7 @@ const submitModifyCharity = async () => {
   }
 }
 
-// Submit Delete Charity functions
+// Submit Delete Charity function
 const submitDeleteCharity = async () => {
   const charity = deleteCharityFormData.value.charity
 

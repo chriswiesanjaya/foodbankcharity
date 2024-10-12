@@ -22,7 +22,7 @@ exports.helloWorld = onRequest((request, response) => {
   response.send('Hello from Firebase!')
 })
 
-// Submit Donation functions
+// Submit Donation function
 exports.submitDonation = onRequest((req, res) => {
   cors(req, res, async () => {
     if (req.method !== 'POST') {
@@ -44,6 +44,91 @@ exports.submitDonation = onRequest((req, res) => {
       return res.status(201).send('Donation successful! Refresh the page.')
     } catch (error) {
       return res.status(500).send('Error submitting donation.')
+    }
+  })
+})
+
+// Submit Volunteer function
+exports.submitVolunteer = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).send('Method Not Allowed.')
+    }
+
+    const { name } = req.body
+    const charityRef = admin.firestore().collection('charities').where('name', '==', name)
+
+    try {
+      const snapshot = await charityRef.get()
+      if (snapshot.empty) {
+        return res.status(404).send('Charity not found.')
+      }
+      const docRef = snapshot.docs[0].ref
+      await docRef.update({
+        volunteer: admin.firestore.FieldValue.increment(1)
+      })
+      return res.status(201).send('Volunteer application successful! Refresh the page.')
+    } catch (error) {
+      return res.status(500).send('Error submitting volunteer application.')
+    }
+  })
+})
+
+// Submit Rate function
+exports.submitRate = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).send('Method Not Allowed')
+    }
+
+    const { name, rating } = req.body
+    const charityRef = admin.firestore().collection('charities').where('name', '==', name)
+
+    try {
+      const snapshot = await charityRef.get()
+      if (snapshot.empty) {
+        return res.status(404).send('Charity not found')
+      }
+      const docRef = snapshot.docs[0].ref
+      await docRef.update({
+        totalRating: admin.firestore.FieldValue.increment(rating),
+        numberRating: admin.firestore.FieldValue.increment(1)
+      })
+      return res.status(201).send('Rating submitted successfully')
+    } catch (error) {
+      return res.status(500).send('Error submitting rating')
+    }
+  })
+})
+
+// Submit Create Charity function
+exports.submitCreateCharity = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).send('Method Not Allowed')
+    }
+
+    const { name, location } = req.body
+    const charityRef = admin.firestore().collection('charities').where('name', '==', name)
+
+    try {
+      const snapshot = await charityRef.get()
+      if (!snapshot.empty) {
+        return res.status(409).send('Charity with this name already exists')
+      }
+
+      await admin.firestore().collection('charities').add({
+        name: name,
+        location: location,
+        donation: 0,
+        volunteer: 0,
+        totalRating: 0,
+        numberRating: 0
+      })
+
+      return res.status(201).send('Charity created successfully')
+    } catch (error) {
+      return res.status(500).send('Error creating charity')
     }
   })
 })
