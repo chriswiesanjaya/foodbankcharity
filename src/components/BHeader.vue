@@ -36,7 +36,9 @@
 
         <!-- Charities Navigation -->
         <li class="nav-item">
-          <router-link to="/charities" class="nav-link" active-class="active">Charity</router-link>
+          <router-link to="/charities" class="nav-link" active-class="active"
+            >Charities</router-link
+          >
         </li>
 
         <!-- About Us Navigation -->

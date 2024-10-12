@@ -189,3 +189,49 @@ exports.submitDeleteCharity = onRequest((req, res) => {
     }
   })
 })
+
+// Get Charity Count API
+exports.getCharityCount = onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    try {
+      const charitiesCollection = admin.firestore().collection('charities')
+      const snapshot = await charitiesCollection.get()
+      const count = snapshot.size
+
+      res.status(200).send({ count })
+    } catch (error) {
+      console.error('Error counting charities: ', error.message)
+      res.status(500).send('Error counting charities')
+    }
+  })
+})
+
+// Get All Charities API
+exports.getAllCharities = onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    try {
+      const charitiesCollection = admin.firestore().collection('charities')
+      const snapshot = await charitiesCollection.get()
+
+      // Check if there are any documents
+      if (snapshot.empty) {
+        return res.status(404).send('No charities found')
+      }
+
+      // Extract and order data from documents
+      const charities = snapshot.docs.map((doc) => ({
+        name: doc.data().name,
+        location: doc.data().location,
+        donation: doc.data().donation,
+        volunteer: doc.data().volunteer,
+        totalRating: doc.data().totalRating,
+        numberRating: doc.data().numberRating
+      }))
+
+      res.status(200).send(charities)
+    } catch (error) {
+      console.error('Error fetching charities: ', error.message)
+      res.status(500).send('Error fetching charities')
+    }
+  })
+})

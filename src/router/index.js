@@ -9,6 +9,8 @@ import RegisterView from '@/views/RegisterView.vue'
 import FirebaseLoginView from '@/views/FirebaseLoginView.vue'
 import FirebaseRegisterView from '@/views/FirebaseRegisterView.vue'
 import AdminDashboard from '@/views/AdminDashboard.vue'
+import GetCharityCountAPI from '@/views/GetCharityCountAPI.vue'
+import GetAllCharitiesAPI from '@/views/GetAllCharitiesAPI.vue'
 
 const routes = [
   {
@@ -63,7 +65,18 @@ const routes = [
   {
     path: '/AdminDashboard',
     name: 'AdminDashboard',
-    component: AdminDashboard
+    component: AdminDashboard,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/GetCharityCountAPI',
+    name: 'GetCharityCountAPI',
+    component: GetCharityCountAPI
+  },
+  {
+    path: '/GetAllCharitiesAPI',
+    name: 'GetAllCharitiesAPI',
+    component: GetAllCharitiesAPI
   },
   // Catch-all route for undefined pages
   {
