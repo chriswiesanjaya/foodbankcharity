@@ -10,7 +10,11 @@ const port = process.env.PORT || 3000
 sgMail.setApiKey('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')
 
 // Middleware
-app.use(cors())
+app.use(
+  cors({
+    origin: 'https://7e6fc006.foodbankcharity.pages.dev' // Allow requests from your deployed site
+  })
+)
 app.use(bodyParser.json({ limit: '10mb' })) // Increase the limit for larger attachments
 
 app.post('/send-email', (req, res) => {

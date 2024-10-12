@@ -93,6 +93,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated')
+  const role = localStorage.getItem('role')
 
   // Redirect authenticated users away from Login and Register to Profile
   if (isAuthenticated && (to.name === 'Login' || to.name === 'Register')) {
@@ -102,6 +103,12 @@ router.beforeEach((to, from, next) => {
 
   // Redirect authenticated users away from Login and Register to Profile
   if (isAuthenticated && (to.name === 'FirebaseLogin' || to.name === 'FirebaseRegister')) {
+    next({ name: 'Profile' })
+    return
+  }
+
+  // Redirect users away from AdminDashboard to Profile
+  if (role !== 'admin' && to.name === 'AdminDashboard') {
     next({ name: 'Profile' })
     return
   }
