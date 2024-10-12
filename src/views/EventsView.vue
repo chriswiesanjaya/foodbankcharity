@@ -125,19 +125,6 @@
                 </select>
               </div>
               <div class="row mb-3">
-                <label for="review" class="form-label">Review</label>
-                <textarea
-                  class="form-control"
-                  id="review"
-                  rows="3"
-                  v-model="rateFormData.review"
-                  required
-                  @blur="() => validateRateReview(true)"
-                  @input="() => validateRateReview(false)"
-                ></textarea>
-              </div>
-              <div v-if="userErrors.review" class="text-danger mb-3">{{ userErrors.review }}</div>
-              <div class="row mb-3">
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
               <div v-if="submitMessages.failure" class="text-danger text-center">
@@ -231,11 +218,11 @@ const events = ref([])
 // Form data and error handling
 const donateFormData = ref({ charity: '', amount: '' })
 const volunteerFormData = ref({ charity: '', job: '' })
-const rateFormData = ref({ charity: '', rate: '', review: '' })
+const rateFormData = ref({ charity: '', rate: '' })
 const createEventFormData = ref({ name: '', location: '' })
 const showForms = ref({ donate: false, volunteer: false, rate: false, createEvent: false })
 const submitMessages = ref({ success: null, failure: null })
-const userErrors = ref({ amount: null, review: null })
+const userErrors = ref({ amount: null })
 const adminErrors = ref({ name: null, location: null })
 
 const fetchEvents = async () => {
@@ -267,7 +254,7 @@ const clearForm = () => {
 
 // Clear messages
 const clearMessages = () => {
-  userErrors.value = { charity: null, amount: null, job: null, rate: null, review: null }
+  userErrors.value = { charity: null, amount: null, job: null, rate: null }
   adminErrors.value = { name: null, location: null }
   submitMessages.value = { success: null, failure: null }
 }
@@ -321,21 +308,6 @@ const validateDonateAmount = (blur) => {
     if (blur) userErrors.value.amount = `Donation amount must be a positive integer of at least $1.`
   } else {
     userErrors.value.amount = null
-  }
-}
-
-// Validate rate review
-const validateRateReview = (blur) => {
-  const rateReview = rateFormData.value.review.trim()
-  const minLength = 10
-  const maxLength = 100
-
-  if (rateReview.length < minLength) {
-    if (blur) userErrors.value.review = 'Review message must be at least 10 characters.'
-  } else if (rateReview.length > maxLength) {
-    if (blur) userErrors.value.review = 'Review message must be at most 100 characters.'
-  } else {
-    userErrors.value.review = null
   }
 }
 
@@ -421,17 +393,33 @@ const submitVolunteer = async () => {
   }
 }
 
+// Submit Rate functions
 const submitRate = async () => {
   const charity = rateFormData.value.charity
-  const rating = {
-    rate: rateFormData.value.rate,
-    review: rateFormData.value.review
-  }
+  const rating = parseInt(rateFormData.value.rate, 10)
+
   try {
-    // Add rating logic here
-    submitMessages.value.success = 'Rating submitted successfully!'
+    const q = query(collection(db, 'events'), where('name', '==', charity))
+    const querySnapshot = await getDocs(q)
+
+    if (querySnapshot.empty) {
+      submitMessages.value.success = null
+      submitMessages.value.failure = 'Charity not found.'
+      return
+    }
+    const docRef = querySnapshot.docs[0].ref
+
+    await updateDoc(docRef, {
+      totalRating: increment(rating),
+      numberRating: increment(1)
+    })
+
+    submitMessages.value.success = 'Rating successful! Refresh the page'
+    submitMessages.value.failure = null
+    clearForm()
   } catch (error) {
-    submitMessages.value.failure = 'Rating submission failed: ' + error.message
+    submitMessages.value.success = null
+    submitMessages.value.failure = 'Rating failed! Try again.'
   }
 }
 
