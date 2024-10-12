@@ -209,7 +209,17 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getFirestore, collection, getDocs, updateDoc, doc, setDoc } from 'firebase/firestore'
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  updateDoc,
+  doc,
+  setDoc,
+  increment,
+  where,
+  query
+} from 'firebase/firestore'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 
@@ -353,18 +363,32 @@ const validateCreateEventLocation = (blur) => {
   }
 }
 
-// Submit functions
+// Submit Donate functions
 const submitDonate = async () => {
-  const amount = parseFloat(donateFormData.value.amount)
+  validateDonateAmount(true)
+
   const charity = donateFormData.value.charity
+  const amount = parseInt(donateFormData.value.amount, 10)
   try {
-    const docRef = doc(db, 'events', charity)
+    const q = query(collection(db, 'events'), where('name', '==', charity))
+    const querySnapshot = await getDocs(q)
+
+    if (querySnapshot.empty) {
+      submitMessages.value.failure = 'Charity not found.'
+      return
+    }
+    const docRef = querySnapshot.docs[0].ref
+
     await updateDoc(docRef, {
-      donation: amount
+      donation: increment(amount)
     })
-    submitMessages.value.success = 'Donation successful!'
+
+    submitMessages.value.success = 'Donation successful! Refresh the page'
+    submitMessages.value.failure = null
+    clearForm()
   } catch (error) {
-    submitMessages.value.failure = 'Donation failed: ' + error.message
+    submitMessages.value.success = null
+    submitMessages.value.failure = 'Donation failed! Try again.'
   }
 }
 
