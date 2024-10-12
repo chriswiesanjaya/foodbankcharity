@@ -137,17 +137,14 @@ const logout = () => {
   padding: 20px;
   border-radius: 10px;
 }
-
 .foodbank-header {
   border-bottom: 2px solid #ccc;
   padding-bottom: 10px;
 }
-
 .foodbank-logo {
   text-decoration: none;
   color: inherit;
 }
-
 .nav-header {
   border-bottom: 2px solid #ccc;
   padding-bottom: 10px;

@@ -4,27 +4,6 @@
       <div class="col-md-8 offset-md-2">
         <!-- Sign Up Form -->
         <form @submit.prevent="submitInquiry">
-          <!-- Email -->
-          <div class="row mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" v-model="formData.email" required />
-          </div>
-
-          <!-- Name -->
-          <div class="row mb-3">
-            <label for="name" class="form-label">Name</label>
-            <input
-              type="text"
-              class="form-control"
-              id="name"
-              v-model="formData.name"
-              required
-              @blur="() => validateName(true)"
-              @input="() => validateName(false)"
-            />
-          </div>
-          <div v-if="errors.name" class="text-danger mb-3">{{ errors.name }}</div>
-
           <!-- Subject -->
           <div class="row mb-3">
             <label for="subject" class="form-label">Subject</label>
@@ -78,18 +57,17 @@
 <script setup>
 import { ref } from 'vue'
 
+const email = ref(localStorage.getItem('email'))
+
 // Form data
 const formData = ref({
-  email: '',
-  name: '',
+  email: email,
   subject: '',
   message: ''
 })
 
 // Error messages
 const errors = ref({
-  email: null,
-  name: null,
   subject: null,
   message: null
 })
@@ -103,21 +81,18 @@ const submitInquiryMessages = ref({
 // Clear form
 const clearForm = () => {
   formData.value = {
-    email: '',
-    name: '',
     subject: '',
     message: ''
   }
 }
 
-// Submit inquiry function
+// Submit inquiry function (TBD)
 const submitInquiry = () => {
   // Validate form
-  validateName(true)
   validateSubject(true)
   validateMessage(true)
 
-  if (!errors.value.name && !errors.value.subject && !errors.value.message) {
+  if (!errors.value.subject && !errors.value.message) {
     // Handle submit inquiry success
     submitInquiryMessages.value.success = 'Your inquiry has been submitted successfully.'
     submitInquiryMessages.value.failure = null
@@ -130,25 +105,16 @@ const submitInquiry = () => {
   }
 }
 
-// Validate name
-const validateName = (blur) => {
-  const name = formData.value.name
-  const minLength = 3
-
-  if (name.length < minLength) {
-    if (blur) errors.value.name = 'Name must be at least 3 characters.'
-  } else {
-    errors.value.name = null
-  }
-}
-
 // Validate subject
 const validateSubject = (blur) => {
   const subject = formData.value.subject
   const minLength = 3
+  const maxLength = 50
 
   if (subject.length < minLength) {
     if (blur) errors.value.subject = 'Subject must be at least 3 characters.'
+  } else if (subject.length > maxLength) {
+    if (blur) errors.value.subject = 'Subject must be no more than 50 characters.'
   } else {
     errors.value.subject = null
   }
@@ -158,9 +124,12 @@ const validateSubject = (blur) => {
 const validateMessage = (blur) => {
   const message = formData.value.message
   const minLength = 10
+  const maxLength = 300
 
   if (message.length < minLength) {
     if (blur) errors.value.message = 'Message must be at least 10 characters.'
+  } else if (message.length > maxLength) {
+    if (blur) errors.value.message = 'Message must be no more than 300 characters.'
   } else {
     errors.value.message = null
   }
