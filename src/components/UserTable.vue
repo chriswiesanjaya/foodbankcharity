@@ -1,9 +1,13 @@
 <template>
   <div class="container text-center">
+    <div class="flex justify-center mb-4">
+      <SelectButton v-model="size" :options="sizeOptions" optionLabel="label" dataKey="label" />
+    </div>
     <DataTable
       ref="dt"
       v-model:filters="filters"
       :value="users"
+      :size="size.value"
       paginator
       :rows="10"
       :rowsPerPageOptions="[5, 10, 15, 20]"
@@ -37,6 +41,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
+import SelectButton from 'primevue/selectbutton' // Import SelectButton
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 
@@ -68,6 +73,14 @@ const exportPDF = () => {
   doc.autoTable(columns, props.users)
   doc.save('users.pdf')
 }
+
+// Size selection for DataTable
+const size = ref({ label: 'Normal', value: 'null' })
+const sizeOptions = ref([
+  { label: 'Small', value: 'small' },
+  { label: 'Normal', value: 'null' },
+  { label: 'Large', value: 'large' }
+])
 </script>
 
 <style scoped>
