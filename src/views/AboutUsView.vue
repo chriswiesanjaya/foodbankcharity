@@ -28,7 +28,7 @@
           </p>
           <p>
             <strong> • Improve Operations:</strong> Give our team the tools they need to manage
-            donations, volunteers, and events smoothly.
+            donations, volunteers, and charities smoothly.
           </p>
           <p>
             <strong> • Simplify Participation:</strong> Make it easy for donors and volunteers to

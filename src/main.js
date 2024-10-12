@@ -6,57 +6,33 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
 
-import accounts from '@/assets/json/accounts.json'
-import events from '@/assets/json/events.json'
+import charities from '@/assets/json/charities.json'
 
 import db from './firebase/init.js'
 import { collection, addDoc, getDocs } from 'firebase/firestore'
 
-// Fetch accounts.json file and store it in Local Storage
-const saveAccountsToLocalStorage = () => {
-  if (!localStorage.getItem('accounts')) {
-    localStorage.setItem('accounts', JSON.stringify(accounts))
-    console.log('Accounts have been loaded into Local Storage.')
-  } else {
-    console.log('Accounts already exist in Local Storage.')
-  }
-}
-
-// Fetch events.json file and store it in Local Storage
-const saveEventsToLocalStorage = () => {
-  if (!localStorage.getItem('events')) {
-    localStorage.setItem('events', JSON.stringify(events))
-    console.log('Events have been loaded into Local Storage.')
-  } else {
-    console.log('Events already exist in Local Storage.')
-  }
-}
-
-saveAccountsToLocalStorage()
-saveEventsToLocalStorage()
-
-// Function to upload events.json to Firestore
-async function uploadEvents() {
+// Function to upload charities.json to Firestore
+async function uploadCharities() {
   try {
-    const eventsCollection = collection(db, 'events')
-    const existingDocs = await getDocs(eventsCollection)
+    const charitiesCollection = collection(db, 'charities')
+    const existingDocs = await getDocs(charitiesCollection)
 
     // Only upload if the collection is empty
     if (existingDocs.empty) {
-      for (const event of events) {
-        await addDoc(eventsCollection, event)
+      for (const charity of charities) {
+        await addDoc(charitiesCollection, charity)
       }
-      console.log('Events successfully uploaded to Firestore')
+      console.log('Charities successfully uploaded to Firestore')
     } else {
-      console.log('Events already exist in Firestore, skipping upload.')
+      console.log('Charities already exist in Firestore, skipping upload.')
     }
   } catch (error) {
-    console.error('Error uploading events: ', error)
+    console.error('Error uploading charities: ', error)
   }
 }
 
-// Call the function to upload events on startup
-uploadEvents()
+// Call the function to upload charities on startup
+uploadCharities()
 
 const app = createApp(App)
 app.use(PrimeVue, { theme: { preset: Aura } })

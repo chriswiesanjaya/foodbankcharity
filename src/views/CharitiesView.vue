@@ -2,11 +2,11 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
-        <h1 class="text-center">Events</h1>
+        <h1 class="text-center">Charity</h1>
 
-        <!-- Events table -->
+        <!-- Charities table -->
         <div class="row text-center">
-          <DataTable :value="events" tableStyle="min-width: 50rem">
+          <DataTable :value="charities" tableStyle="min-width: 50rem">
             <Column field="name" header="Charity Name"></Column>
             <Column field="location" header="Location"></Column>
             <Column field="donation" header="Donation (AUD)"></Column>
@@ -30,13 +30,13 @@
         <div class="row">
           <!-- Donate form for user -->
           <div v-if="showForms.donate">
-            <h3 class="text-center">Donate to an Event</h3>
+            <h3 class="text-center">Donate to a Charity</h3>
             <form @submit.prevent="submitDonate">
               <div class="row mb-3">
                 <label for="charity" class="form-label">Charity</label>
                 <select class="form-select" id="charity" v-model="donateFormData.charity" required>
-                  <option v-for="event in events" :key="event.name" :value="event.name">
-                    {{ event.name }}
+                  <option v-for="charity in charities" :key="charity.name" :value="charity.name">
+                    {{ charity.name }}
                   </option>
                 </select>
               </div>
@@ -77,8 +77,8 @@
                   v-model="volunteerFormData.charity"
                   required
                 >
-                  <option v-for="event in events" :key="event.name" :value="event.name">
-                    {{ event.name }}
+                  <option v-for="charity in charities" :key="charity.name" :value="charity.name">
+                    {{ charity.name }}
                   </option>
                 </select>
               </div>
@@ -104,13 +104,13 @@
 
           <!-- Rate form for user -->
           <div v-if="showForms.rate">
-            <h3 class="text-center">Rate an Event</h3>
+            <h3 class="text-center">Rate a Charity</h3>
             <form @submit.prevent="submitRate">
               <div class="row mb-3">
                 <label for="charity" class="form-label">Charity</label>
                 <select class="form-select" id="charity" v-model="rateFormData.charity" required>
-                  <option v-for="event in events" :key="event.name" :value="event.name">
-                    {{ event.name }}
+                  <option v-for="charity in charities" :key="charity.name" :value="charity.name">
+                    {{ charity.name }}
                   </option>
                 </select>
               </div>
@@ -139,26 +139,26 @@
 
         <!-- Buttons for admin -->
         <div class="col py-5 text-center" v-if="role === 'admin'">
-          <button type="button" class="btn btn-secondary" @click="toggleCreateEventButton">
-            Create Event
+          <button type="button" class="btn btn-secondary" @click="toggleCreateCharityButton">
+            Create Charity
           </button>
         </div>
 
         <!-- Forms for admin -->
         <div class="row">
-          <div v-if="showForms.createEvent">
-            <h3 class="text-center">Create an Event</h3>
-            <form @submit.prevent="submitCreateEvent">
+          <div v-if="showForms.createCharity">
+            <h3 class="text-center">Create an Charity</h3>
+            <form @submit.prevent="submitCreateCharity">
               <div class="row mb-3">
                 <label for="name" class="form-label">Name</label>
                 <input
                   type="text"
                   class="form-control"
                   id="name"
-                  v-model="createEventFormData.name"
+                  v-model="createCharityFormData.name"
                   required
-                  @blur="() => validateCreateEventName(true)"
-                  @input="() => validateCreateEventName(false)"
+                  @blur="() => validateCreateCharityName(true)"
+                  @input="() => validateCreateCharityName(false)"
                 />
               </div>
               <div v-if="adminErrors.name" class="text-danger mb-3">{{ adminErrors.name }}</div>
@@ -168,10 +168,10 @@
                   type="text"
                   class="form-control"
                   id="location"
-                  v-model="createEventFormData.location"
+                  v-model="createCharityFormData.location"
                   required
-                  @blur="() => validateCreateEventLocation(true)"
-                  @input="() => validateCreateEventLocation(false)"
+                  @blur="() => validateCreateCharityLocation(true)"
+                  @input="() => validateCreateCharityLocation(false)"
                 />
               </div>
               <div v-if="adminErrors.location" class="text-danger mb-3">
@@ -201,7 +201,6 @@ import {
   collection,
   getDocs,
   updateDoc,
-  doc,
   increment,
   where,
   query,
@@ -213,33 +212,34 @@ import Column from 'primevue/column'
 const db = getFirestore()
 const role = localStorage.getItem('role')
 
-const events = ref([])
+const charities = ref([])
 
 // Form data and error handling
 const donateFormData = ref({ charity: '', amount: '' })
 const volunteerFormData = ref({ charity: '', job: '' })
 const rateFormData = ref({ charity: '', rate: '' })
-const createEventFormData = ref({ name: '', location: '' })
-const showForms = ref({ donate: false, volunteer: false, rate: false, createEvent: false })
+const createCharityFormData = ref({ name: '', location: '' })
+const showForms = ref({ donate: false, volunteer: false, rate: false, createCharity: false })
 const submitMessages = ref({ success: null, failure: null })
 const userErrors = ref({ amount: null })
 const adminErrors = ref({ name: null, location: null })
 
-const fetchEvents = async () => {
-  const querySnapshot = await getDocs(collection(db, 'events'))
+const fetchCharities = async () => {
+  const querySnapshot = await getDocs(collection(db, 'charities'))
 
-  // Map the documents to event objects
-  const eventList = querySnapshot.docs.map((doc) => {
-    const event = { id: doc.id, ...doc.data() }
+  // Map the documents to charity objects
+  const charityList = querySnapshot.docs.map((doc) => {
+    const charity = { id: doc.id, ...doc.data() }
 
     // Calculate the rating
-    event.rating = event.numberRating > 0 ? (event.totalRating / event.numberRating).toFixed(2) : 0
+    charity.rating =
+      charity.numberRating > 0 ? (charity.totalRating / charity.numberRating).toFixed(2) : 0
 
-    return event
+    return charity
   })
 
-  // Sort the event list by 'name' in ascending order
-  events.value = eventList.sort((a, b) => {
+  // Sort the charity list by 'name' in ascending order
+  charities.value = charityList.sort((a, b) => {
     return a.name.localeCompare(b.name)
   })
 }
@@ -249,7 +249,7 @@ const clearForm = () => {
   donateFormData.value = { charity: '', amount: '' }
   volunteerFormData.value = { charity: '', job: '' }
   rateFormData.value = { charity: '', rating: '' }
-  createEventFormData.value = { name: '', location: '' }
+  createCharityFormData.value = { name: '', location: '' }
 }
 
 // Clear messages
@@ -264,7 +264,7 @@ const toggleDonateButton = () => {
   showForms.value.donate = !showForms.value.donate
   showForms.value.volunteer = false
   showForms.value.rate = false
-  showForms.value.createEvent = false
+  showForms.value.createCharity = false
   clearForm()
   clearMessages()
 }
@@ -274,7 +274,7 @@ const toggleVolunteerButton = () => {
   showForms.value.donate = false
   showForms.value.volunteer = !showForms.value.volunteer
   showForms.value.rate = false
-  showForms.value.createEvent = false
+  showForms.value.createCharity = false
   clearForm()
   clearMessages()
 }
@@ -284,17 +284,17 @@ const toggleRateButton = () => {
   showForms.value.donate = false
   showForms.value.volunteer = false
   showForms.value.rate = !showForms.value.rate
-  showForms.value.createEvent = false
+  showForms.value.createCharity = false
   clearForm()
   clearMessages()
 }
 
-// Create Event button toggle onclick
-const toggleCreateEventButton = () => {
+// Create Charity button toggle onclick
+const toggleCreateCharityButton = () => {
   showForms.value.donate = false
   showForms.value.volunteer = false
   showForms.value.rate = false
-  showForms.value.createEvent = !showForms.value.createEvent
+  showForms.value.createCharity = !showForms.value.createCharity
   clearForm()
   clearMessages()
 }
@@ -311,9 +311,9 @@ const validateDonateAmount = (blur) => {
   }
 }
 
-// Validate create event name
-const validateCreateEventName = (blur) => {
-  const name = createEventFormData.value.name
+// Validate create charity name
+const validateCreateCharityName = (blur) => {
+  const name = createCharityFormData.value.name
   const minLength = 3
 
   if (name.length < minLength) {
@@ -323,9 +323,9 @@ const validateCreateEventName = (blur) => {
   }
 }
 
-// Validate create event location
-const validateCreateEventLocation = (blur) => {
-  const location = createEventFormData.value.location
+// Validate create charity location
+const validateCreateCharityLocation = (blur) => {
+  const location = createCharityFormData.value.location
   const minLength = 3
 
   if (location.length < minLength) {
@@ -342,7 +342,7 @@ const submitDonate = async () => {
   const amount = parseInt(donateFormData.value.amount, 10)
 
   try {
-    const q = query(collection(db, 'events'), where('name', '==', charity))
+    const q = query(collection(db, 'charities'), where('name', '==', charity))
     const querySnapshot = await getDocs(q)
 
     if (querySnapshot.empty) {
@@ -370,7 +370,7 @@ const submitVolunteer = async () => {
   const charity = volunteerFormData.value.charity
 
   try {
-    const q = query(collection(db, 'events'), where('name', '==', charity))
+    const q = query(collection(db, 'charities'), where('name', '==', charity))
     const querySnapshot = await getDocs(q)
 
     if (querySnapshot.empty) {
@@ -399,7 +399,7 @@ const submitRate = async () => {
   const rating = parseInt(rateFormData.value.rate, 10)
 
   try {
-    const q = query(collection(db, 'events'), where('name', '==', charity))
+    const q = query(collection(db, 'charities'), where('name', '==', charity))
     const querySnapshot = await getDocs(q)
 
     if (querySnapshot.empty) {
@@ -423,21 +423,23 @@ const submitRate = async () => {
   }
 }
 
-const submitCreateEvent = async () => {
-  validateCreateEventName(true)
-  validateCreateEventLocation(true)
-  const name = createEventFormData.value.name
-  const location = createEventFormData.value.location
+const submitCreateCharity = async () => {
+  validateCreateCharityName(true)
+  validateCreateCharityLocation(true)
+  const name = createCharityFormData.value.name
+  const location = createCharityFormData.value.location
 
   try {
-    const querySnapshot = await getDocs(query(collection(db, 'events'), where('name', '==', name)))
+    const querySnapshot = await getDocs(
+      query(collection(db, 'charities'), where('name', '==', name))
+    )
 
     if (!querySnapshot.empty) {
       submitMessages.value.failure = 'Charity with this name already exists!'
       return
     }
 
-    await addDoc(collection(db, 'events'), {
+    await addDoc(collection(db, 'charities'), {
       name: name,
       location: location,
       donation: 0,
@@ -455,8 +457,8 @@ const submitCreateEvent = async () => {
   }
 }
 
-// Initial fetch of events
-onMounted(fetchEvents)
+// Initial fetch of charities
+onMounted(fetchCharities)
 </script>
 
 <style scoped>

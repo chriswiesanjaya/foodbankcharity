@@ -18,7 +18,7 @@
         <!-- <router-link v-if="!isAuthenticated" to="/login" class="btn btn-primary">Login</router-link>
         <button v-if="isAuthenticated" @click="logout1" class="btn btn-secondary">Logout</button> -->
 
-        <!-- Firebase Login / Logout Button -->
+        <!-- Login / Logout Button -->
         <router-link v-if="!isAuthenticated" to="/FirebaseLogin" class="btn btn-primary"
           >Login</router-link
         >
@@ -34,9 +34,9 @@
           <router-link to="/profile" class="nav-link" active-class="active">Profile</router-link>
         </li>
 
-        <!-- Events Navigation -->
+        <!-- Charities Navigation -->
         <li class="nav-item">
-          <router-link to="/events" class="nav-link" active-class="active">Events</router-link>
+          <router-link to="/charities" class="nav-link" active-class="active">Charity</router-link>
         </li>
 
         <!-- About Us Navigation -->
@@ -68,7 +68,7 @@ const isAuthenticated = ref(localStorage.getItem('isAuthenticated') === 'true')
 // Firebase Log Out
 const logout = () => {
   signOut(auth)
-    .then((data) => {
+    .then(() => {
       // Remove email and role in local storage
       isAuthenticated.value = false
       localStorage.removeItem('email')
@@ -91,15 +91,15 @@ const logout = () => {
 }
 
 // Log out function
-const logout1 = () => {
-  localStorage.removeItem('isAuthenticated')
-  localStorage.removeItem('email')
-  localStorage.removeItem('role')
-  isAuthenticated.value = false
-  router.push('/login').then(() => {
-    window.location.reload()
-  })
-}
+// const logout1 = () => {
+//   localStorage.removeItem('isAuthenticated')
+//   localStorage.removeItem('email')
+//   localStorage.removeItem('role')
+//   isAuthenticated.value = false
+//   router.push('/login').then(() => {
+//     window.location.reload()
+//   })
+// }
 </script>
 
 <style scoped>

@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import AboutUsView from '../views/AboutUsView.vue'
 import ContactUsView from '@/views/ContactUsView.vue'
-import EventsView from '@/views/EventsView.vue'
+import CharitiesView from '@/views/CharitiesView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
@@ -28,9 +28,9 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/events',
-    name: 'Events',
-    component: EventsView,
+    path: '/charities',
+    name: 'Charities',
+    component: CharitiesView,
     meta: { requiresAuth: true }
   },
   {
