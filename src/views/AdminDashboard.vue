@@ -2,7 +2,6 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
-        <!-- User table -->
         <h1 class="text-center">User Table</h1>
         <UserTable :users="users" />
       </div>
@@ -12,10 +11,8 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
-        <!-- Newsletter Form -->
         <h1 class="text-center">Send Newsletter</h1>
         <form @submit.prevent="submitNewsletter">
-          <!-- Subject -->
           <div class="row mb-3">
             <label for="subject" class="form-label">Subject</label>
             <input
@@ -30,7 +27,6 @@
           </div>
           <div v-if="errors.subject" class="text-danger mb-3">{{ errors.subject }}</div>
 
-          <!-- Message -->
           <div class="row mb-3">
             <label for="message" class="form-label">Message</label>
             <textarea
@@ -45,17 +41,20 @@
           </div>
           <div v-if="errors.message" class="text-danger mb-3">{{ errors.message }}</div>
 
-          <!-- Submit Button -->
+          <div class="mb-3">
+            <button type="button" class="btn btn-secondary me-3" @click="addAttachment">
+              Add Attachment
+            </button>
+            <span v-if="attachmentName">{{ attachmentName }}</span>
+          </div>
+
           <div class="row mb-3">
             <button type="submit" class="btn btn-primary">Submit</button>
           </div>
 
-          <!-- Submit failure message -->
           <div v-if="submitNewsletterMessages.failure" class="text-danger text-center">
             {{ submitNewsletterMessages.failure }}
           </div>
-
-          <!-- Submit success message -->
           <div v-if="submitNewsletterMessages.success" class="text-success text-center">
             {{ submitNewsletterMessages.success }}
           </div>
@@ -74,46 +73,57 @@ import axios from 'axios'
 const db = getFirestore()
 const users = ref([])
 const newsletter = ref([])
+const attachment = ref(null)
+const attachmentName = ref('')
 
-// Fetch users from Firestore
-const fetchUsers = async () => {
-  const querySnapshot = await getDocs(collection(db, 'users'))
-  users.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-}
-
-// Fetch newsletter emails from Firestore
-const fetchNewsletter = async () => {
-  const querySnapshot = await getDocs(collection(db, 'newsletter'))
-  newsletter.value = querySnapshot.docs.map((doc) => doc.data().email)
-}
-
-// Form data
 const formData = ref({
   subject: '',
   message: ''
 })
 
-// Error messages
 const errors = ref({
   subject: null,
   message: null
 })
 
-// Submit newsletter messages
 const submitNewsletterMessages = ref({
   success: null,
   failure: null
 })
 
-// Clear form
 const clearForm = () => {
   formData.value = {
     subject: '',
     message: ''
   }
+  attachment.value = null
+  attachmentName.value = ''
 }
 
-// Submit newsletter function (TBD)
+const fetchUsers = async () => {
+  const querySnapshot = await getDocs(collection(db, 'users'))
+  users.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+}
+
+const fetchNewsletter = async () => {
+  const querySnapshot = await getDocs(collection(db, 'newsletter'))
+  newsletter.value = querySnapshot.docs.map((doc) => doc.data().email)
+}
+
+const addAttachment = () => {
+  const fileInput = document.createElement('input')
+  fileInput.type = 'file'
+  fileInput.accept = '.pdf, .png, .jpg, .jpeg'
+  fileInput.onchange = (event) => {
+    const selectedFile = event.target.files[0]
+    if (selectedFile) {
+      attachment.value = selectedFile
+      attachmentName.value = selectedFile.name
+    }
+  }
+  fileInput.click()
+}
+
 const submitNewsletter = async () => {
   validateSubject(true)
   validateMessage(true)
@@ -121,12 +131,20 @@ const submitNewsletter = async () => {
   if (!errors.value.subject && !errors.value.message) {
     try {
       for (const recipient of newsletter.value) {
-        await axios.post('http://localhost:3000/send-email', {
+        const payload = {
           to: recipient,
           from: 'chriswiesanjaya@gmail.com',
           subject: formData.value.subject,
           text: formData.value.message
-        })
+        }
+
+        // If an attachment is present, read it as base64
+        if (attachment.value) {
+          const base64data = await readFileAsDataURL(attachment.value)
+          payload.attachment = base64data // Send this to the server
+        }
+
+        await sendEmail(payload) // Wait for the email to send before moving to the next recipient
       }
 
       submitNewsletterMessages.value.success = 'Newsletter has been sent successfully.'
@@ -135,12 +153,31 @@ const submitNewsletter = async () => {
     } catch (error) {
       submitNewsletterMessages.value.success = null
       submitNewsletterMessages.value.failure = 'Failed to send newsletter. Please try again.'
-      console.error(error)
+      console.error('Error sending email:', error.response ? error.response.data : error.message)
     }
   } else {
     submitNewsletterMessages.value.success = null
-    submitNewsletterMessages.value.failure = 'Failed to send newsletter. Please try again.'
+    submitNewsletterMessages.value.failure = 'Please fix the errors before submitting.'
   }
+}
+
+// Function to read the file as a data URL
+const readFileAsDataURL = (file) => {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader()
+    fileReader.onloadend = () => resolve(fileReader.result)
+    fileReader.onerror = () => reject(new Error('Failed to read file'))
+    fileReader.readAsDataURL(file)
+  })
+}
+
+// Function to send email
+const sendEmail = async (payload) => {
+  await axios.post('http://localhost:3000/send-email', payload, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
 }
 
 // Validate subject

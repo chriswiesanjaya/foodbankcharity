@@ -56,13 +56,6 @@
           <router-link to="/aboutus" class="nav-link" active-class="active">About Us</router-link>
         </li>
 
-        <!-- Contact Us Navigation -->
-        <!-- <li class="nav-item" v-if="role === 'user'">
-          <router-link to="/contactus" class="nav-link" active-class="active"
-            >Contact Us</router-link
-          >
-        </li> -->
-
         <!-- Admin Dashboard Navigation -->
         <li class="nav-item" v-if="role === 'admin'">
           <router-link to="/AdminDashboard" class="nav-link" active-class="active"
