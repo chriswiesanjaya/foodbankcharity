@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
-        <!-- Sign Up Form -->
+        <!-- Contact Us Form -->
         <form @submit.prevent="submitInquiry">
           <!-- Subject -->
           <div class="row mb-3">
@@ -56,6 +56,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import axios from 'axios'
 
 const email = ref(localStorage.getItem('email'))
 
@@ -81,25 +82,35 @@ const submitInquiryMessages = ref({
 // Clear form
 const clearForm = () => {
   formData.value = {
+    email: email,
     subject: '',
     message: ''
   }
 }
 
 // Submit inquiry function (TBD)
-const submitInquiry = () => {
-  // Validate form
+const submitInquiry = async () => {
   validateSubject(true)
   validateMessage(true)
 
   if (!errors.value.subject && !errors.value.message) {
-    // Handle submit inquiry success
-    submitInquiryMessages.value.success = 'Your inquiry has been submitted successfully.'
-    submitInquiryMessages.value.failure = null
+    try {
+      await axios.post('http://localhost:3000/send-email', {
+        to: 'chriswiesanjaya@gmail.com',
+        from: 'chriswiesanjaya@gmail.com',
+        subject: formData.value.subject,
+        text: formData.value.message
+      })
 
-    clearForm()
+      submitInquiryMessages.value.success = 'Your inquiry has been submitted successfully.'
+      submitInquiryMessages.value.failure = null
+      clearForm()
+    } catch (error) {
+      submitInquiryMessages.value.success = null
+      submitInquiryMessages.value.failure = 'Failed to submit your inquiry. Please try again.'
+      console.error(error)
+    }
   } else {
-    // Handle submit inquiry failure
     submitInquiryMessages.value.success = null
     submitInquiryMessages.value.failure = 'Failed to submit your inquiry. Please try again.'
   }
