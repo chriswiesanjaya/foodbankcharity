@@ -8,6 +8,7 @@ import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import FirebaseLoginView from '@/views/FirebaseLoginView.vue'
 import FirebaseRegisterView from '@/views/FirebaseRegisterView.vue'
+import AdminDashboard from '@/views/AdminDashboard.vue'
 
 const routes = [
   {
@@ -58,6 +59,11 @@ const routes = [
     path: '/FirebaseRegister',
     name: 'FirebaseRegister',
     component: FirebaseRegisterView
+  },
+  {
+    path: '/AdminDashboard',
+    name: 'AdminDashboard',
+    component: AdminDashboard
   },
   // Catch-all route for undefined pages
   {

@@ -291,17 +291,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  updateDoc,
-  increment,
-  where,
-  query,
-  addDoc,
-  deleteDoc
-} from 'firebase/firestore'
+import { getFirestore, collection, getDocs } from 'firebase/firestore'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import axios from 'axios'

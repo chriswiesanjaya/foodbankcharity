@@ -45,9 +45,16 @@
         </li>
 
         <!-- Contact Us Navigation -->
-        <li class="nav-item">
+        <li class="nav-item" v-if="role === 'user'">
           <router-link to="/contactus" class="nav-link" active-class="active"
             >Contact Us</router-link
+          >
+        </li>
+
+        <!-- Admin Dashboard Navigation -->
+        <li class="nav-item" v-if="role === 'admin'">
+          <router-link to="/AdminDashboard" class="nav-link" active-class="active"
+            >Admin Dashboard</router-link
           >
         </li>
       </ul>
@@ -64,6 +71,7 @@ const router = useRouter()
 const auth = getAuth()
 
 const isAuthenticated = ref(localStorage.getItem('isAuthenticated') === 'true')
+const role = ref(localStorage.getItem('role'))
 
 // Firebase Log Out
 const logout = () => {
