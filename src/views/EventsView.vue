@@ -202,10 +202,10 @@ import {
   getDocs,
   updateDoc,
   doc,
-  setDoc,
   increment,
   where,
-  query
+  query,
+  addDoc
 } from 'firebase/firestore'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -356,7 +356,7 @@ const submitDonate = async () => {
       donation: increment(amount)
     })
 
-    submitMessages.value.success = 'Donation successful! Refresh the page'
+    submitMessages.value.success = 'Donation successful! Refresh the page.'
     submitMessages.value.failure = null
     clearForm()
   } catch (error) {
@@ -384,7 +384,7 @@ const submitVolunteer = async () => {
       volunteer: increment(1)
     })
 
-    submitMessages.value.success = 'Volunteer application successful! Refresh the page'
+    submitMessages.value.success = 'Volunteer application successful! Refresh the page.'
     submitMessages.value.failure = null
     clearForm()
   } catch (error) {
@@ -414,7 +414,7 @@ const submitRate = async () => {
       numberRating: increment(1)
     })
 
-    submitMessages.value.success = 'Rating successful! Refresh the page'
+    submitMessages.value.success = 'Rating successful! Refresh the page.'
     submitMessages.value.failure = null
     clearForm()
   } catch (error) {
@@ -424,18 +424,34 @@ const submitRate = async () => {
 }
 
 const submitCreateEvent = async () => {
-  const { name, location } = createEventFormData.value
+  validateCreateEventName(true)
+  validateCreateEventLocation(true)
+  const name = createEventFormData.value.name
+  const location = createEventFormData.value.location
+
   try {
-    await setDoc(doc(db, 'events', name), {
-      name,
-      location,
+    const querySnapshot = await getDocs(query(collection(db, 'events'), where('name', '==', name)))
+
+    if (!querySnapshot.empty) {
+      submitMessages.value.failure = 'Charity with this name already exists!'
+      return
+    }
+
+    await addDoc(collection(db, 'events'), {
+      name: name,
+      location: location,
       donation: 0,
-      volunteers: 0,
-      ratings: []
+      volunteer: 0,
+      totalRating: 0,
+      numberRating: 0
     })
-    submitMessages.value.success = 'Event created successfully!'
+
+    submitMessages.value.success = 'Charity creatiion successful! Refresh the page.'
+    submitMessages.value.failure = null
+    clearForm()
   } catch (error) {
-    submitMessages.value.failure = 'Event creation failed: ' + error.message
+    submitMessages.value.success = null
+    submitMessages.value.failure = 'Charity creation failed! Try again.'
   }
 }
 

@@ -257,6 +257,24 @@ const submitRate = () => {
   }
 }
 
+const submitCreateEvent = async () => {
+  const name = createEventFormData.value.name
+  const location = createEventFormData.value.location
+  try {
+    await setDoc(doc(db, 'events', name), {
+      name,
+      location,
+      donation: 0,
+      volunteer: 0,
+      totalRating: 0,
+      numberRating: 0
+    })
+    submitMessages.value.success = 'Event created successfully!'
+  } catch (error) {
+    submitMessages.value.failure = 'Event creation failed: ' + error.message
+  }
+}
+
 // Submit Create Event function
 const submitCreateEvent = () => {
   // Validate form
