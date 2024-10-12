@@ -3,7 +3,6 @@
     <div class="row">
       <div class="col-md-8 offset-md-2">
         <!-- Register Form -->
-        <h1 class="text-center">Firebase Register</h1>
         <form @submit.prevent="register">
           <!-- Email -->
           <div class="row mb-3">

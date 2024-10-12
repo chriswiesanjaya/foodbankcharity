@@ -2,7 +2,6 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
-        <h1 class="text-center">Profile</h1>
         <!-- Profile image -->
         <div class="image-container">
           <img

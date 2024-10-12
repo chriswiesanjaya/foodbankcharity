@@ -2,18 +2,9 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
-        <h1 class="text-center">Charity</h1>
-
-        <!-- Charities table -->
-        <div class="row text-center">
-          <DataTable :value="charities" tableStyle="min-width: 50rem">
-            <Column field="name" header="Charity Name"></Column>
-            <Column field="location" header="Location"></Column>
-            <Column field="donation" header="Donation (AUD)"></Column>
-            <Column field="volunteer" header="Volunteer"></Column>
-            <Column field="rating" header="Rating (out of 5)"></Column>
-          </DataTable>
-        </div>
+        <!-- Charity table -->
+        <h1 class="text-center">Charity Table</h1>
+        <CharityTable :charities="charities" />
 
         <!-- Buttons for user -->
         <div class="col py-5 text-center" v-if="role === 'user'">
@@ -292,9 +283,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getFirestore, collection, getDocs } from 'firebase/firestore'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
 import axios from 'axios'
+import CharityTable from '../components/CharityTable.vue'
 
 const db = getFirestore()
 const role = localStorage.getItem('role')
