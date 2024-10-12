@@ -23,7 +23,9 @@
           <button type="button" class="btn btn-secondary me-3" @click="toggleVolunteerButton">
             Volunteer
           </button>
-          <button type="button" class="btn btn-secondary" @click="toggleRateButton">Rate</button>
+          <button type="button" class="btn btn-secondary me-3" @click="toggleRateButton">
+            Rate
+          </button>
         </div>
 
         <!-- Forms for user -->
@@ -139,15 +141,22 @@
 
         <!-- Buttons for admin -->
         <div class="col py-5 text-center" v-if="role === 'admin'">
-          <button type="button" class="btn btn-secondary" @click="toggleCreateCharityButton">
+          <button type="button" class="btn btn-secondary me-3" @click="toggleCreateCharityButton">
             Create Charity
+          </button>
+          <button type="button" class="btn btn-secondary me-3" @click="toggleModifyCharityButton">
+            Modify Charity
+          </button>
+          <button type="button" class="btn btn-secondary me-3" @click="toggleDeleteCharityButton">
+            Delete Charity
           </button>
         </div>
 
         <!-- Forms for admin -->
         <div class="row">
+          <!-- Create Charity form for admin -->
           <div v-if="showForms.createCharity">
-            <h3 class="text-center">Create an Charity</h3>
+            <h3 class="text-center">Create a Charity</h3>
             <form @submit.prevent="submitCreateCharity">
               <div class="row mb-3">
                 <label for="name" class="form-label">Name</label>
@@ -188,6 +197,92 @@
               </div>
             </form>
           </div>
+
+          <!-- Modify Charity form for admin -->
+          <div v-if="showForms.modifyCharity">
+            <h3 class="text-center">Modify a Charity</h3>
+            <form @submit.prevent="submitModifyCharity">
+              <div class="row mb-3">
+                <label for="charity" class="form-label">Charity</label>
+                <select
+                  class="form-select"
+                  id="charity"
+                  v-model="modifyCharityFormData.charity"
+                  required
+                >
+                  <option v-for="charity in charities" :key="charity.name" :value="charity.name">
+                    {{ charity.name }}
+                  </option>
+                </select>
+              </div>
+              <div class="row mb-3">
+                <label for="name" class="form-label">Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  v-model="modifyCharityFormData.name"
+                  required
+                  @blur="() => validateModifyCharityName(true)"
+                  @input="() => validateModifyCharityName(false)"
+                />
+              </div>
+              <div v-if="adminErrors.name" class="text-danger mb-3">{{ adminErrors.name }}</div>
+              <div class="row mb-3">
+                <label for="location" class="form-label">Location</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="location"
+                  v-model="modifyCharityFormData.location"
+                  required
+                  @blur="() => validateModifyCharityLocation(true)"
+                  @input="() => validateModifyCharityLocation(false)"
+                />
+              </div>
+              <div v-if="adminErrors.location" class="text-danger mb-3">
+                {{ adminErrors.location }}
+              </div>
+              <div class="row mb-3">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+              <div v-if="submitMessages.failure" class="text-danger text-center">
+                {{ submitMessages.failure }}
+              </div>
+              <div v-if="submitMessages.success" class="text-success text-center">
+                {{ submitMessages.success }}
+              </div>
+            </form>
+          </div>
+
+          <!-- Delete Charity form for admin -->
+          <div v-if="showForms.deleteCharity">
+            <h3 class="text-center">Delete a Charity</h3>
+            <form @submit.prevent="submitDeleteCharity">
+              <div class="row mb-3">
+                <label for="charity" class="form-label">Charity</label>
+                <select
+                  class="form-select"
+                  id="charity"
+                  v-model="deleteCharityFormData.charity"
+                  required
+                >
+                  <option v-for="charity in charities" :key="charity.name" :value="charity.name">
+                    {{ charity.name }}
+                  </option>
+                </select>
+              </div>
+              <div class="row mb-3">
+                <button type="submit" class="btn btn-primary">Delete</button>
+              </div>
+              <div v-if="submitMessages.failure" class="text-danger text-center">
+                {{ submitMessages.failure }}
+              </div>
+              <div v-if="submitMessages.success" class="text-success text-center">
+                {{ submitMessages.success }}
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -204,7 +299,8 @@ import {
   increment,
   where,
   query,
-  addDoc
+  addDoc,
+  deleteDoc
 } from 'firebase/firestore'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
@@ -219,7 +315,17 @@ const donateFormData = ref({ charity: '', amount: '' })
 const volunteerFormData = ref({ charity: '', job: '' })
 const rateFormData = ref({ charity: '', rate: '' })
 const createCharityFormData = ref({ name: '', location: '' })
-const showForms = ref({ donate: false, volunteer: false, rate: false, createCharity: false })
+const modifyCharityFormData = ref({ charity: '', name: '', location: '' })
+const deleteCharityFormData = ref({ charity: '' })
+
+const showForms = ref({
+  donate: false,
+  volunteer: false,
+  rate: false,
+  createCharity: false,
+  modifyCharity: false,
+  deleteCharity: false
+})
 const submitMessages = ref({ success: null, failure: null })
 const userErrors = ref({ amount: null })
 const adminErrors = ref({ name: null, location: null })
@@ -227,18 +333,13 @@ const adminErrors = ref({ name: null, location: null })
 const fetchCharities = async () => {
   const querySnapshot = await getDocs(collection(db, 'charities'))
 
-  // Map the documents to charity objects
   const charityList = querySnapshot.docs.map((doc) => {
     const charity = { id: doc.id, ...doc.data() }
-
-    // Calculate the rating
     charity.rating =
       charity.numberRating > 0 ? (charity.totalRating / charity.numberRating).toFixed(2) : 0
-
     return charity
   })
 
-  // Sort the charity list by 'name' in ascending order
   charities.value = charityList.sort((a, b) => {
     return a.name.localeCompare(b.name)
   })
@@ -250,6 +351,8 @@ const clearForm = () => {
   volunteerFormData.value = { charity: '', job: '' }
   rateFormData.value = { charity: '', rating: '' }
   createCharityFormData.value = { name: '', location: '' }
+  modifyCharityFormData.value = { charity: '', name: '', location: '' }
+  deleteCharityFormData.value = { charity: '' }
 }
 
 // Clear messages
@@ -259,44 +362,52 @@ const clearMessages = () => {
   submitMessages.value = { success: null, failure: null }
 }
 
-// Donate button toggle onclick
-const toggleDonateButton = () => {
-  showForms.value.donate = !showForms.value.donate
+// Toggle all buttons
+const toggleAllButtons = () => {
+  showForms.value.donate = false
   showForms.value.volunteer = false
   showForms.value.rate = false
   showForms.value.createCharity = false
+  showForms.value.modifyCharity = false
+  showForms.value.deleteCharity = false
   clearForm()
   clearMessages()
+}
+
+// Donate button toggle onclick
+const toggleDonateButton = () => {
+  toggleAllButtons()
+  showForms.value.donate = !showForms.value.donate
 }
 
 // Volunteer button toggle onclick
 const toggleVolunteerButton = () => {
-  showForms.value.donate = false
+  toggleAllButtons()
   showForms.value.volunteer = !showForms.value.volunteer
-  showForms.value.rate = false
-  showForms.value.createCharity = false
-  clearForm()
-  clearMessages()
 }
 
 // Rate button toggle onclick
 const toggleRateButton = () => {
-  showForms.value.donate = false
-  showForms.value.volunteer = false
+  toggleAllButtons()
   showForms.value.rate = !showForms.value.rate
-  showForms.value.createCharity = false
-  clearForm()
-  clearMessages()
 }
 
 // Create Charity button toggle onclick
 const toggleCreateCharityButton = () => {
-  showForms.value.donate = false
-  showForms.value.volunteer = false
-  showForms.value.rate = false
+  toggleAllButtons()
   showForms.value.createCharity = !showForms.value.createCharity
-  clearForm()
-  clearMessages()
+}
+
+// Modify Charity button toggle onclick
+const toggleModifyCharityButton = () => {
+  toggleAllButtons()
+  showForms.value.modifyCharity = !showForms.value.modifyCharity
+}
+
+// Delete Charity button toggle onclick
+const toggleDeleteCharityButton = () => {
+  toggleAllButtons()
+  showForms.value.deleteCharity = !showForms.value.deleteCharity
 }
 
 // Validate donate amount
@@ -326,6 +437,30 @@ const validateCreateCharityName = (blur) => {
 // Validate create charity location
 const validateCreateCharityLocation = (blur) => {
   const location = createCharityFormData.value.location
+  const minLength = 3
+
+  if (location.length < minLength) {
+    if (blur) adminErrors.value.location = 'Location must be at least 3 characters.'
+  } else {
+    adminErrors.value.location = null
+  }
+}
+
+// Validate modify charity name
+const validateModifyCharityName = (blur) => {
+  const name = modifyCharityFormData.value.name
+  const minLength = 3
+
+  if (name.length < minLength) {
+    if (blur) adminErrors.value.name = 'Name must be at least 3 characters.'
+  } else {
+    adminErrors.value.name = null
+  }
+}
+
+// Validate modify charity location
+const validateModifyCharityLocation = (blur) => {
+  const location = modifyCharityFormData.value.location
   const minLength = 3
 
   if (location.length < minLength) {
@@ -448,12 +583,70 @@ const submitCreateCharity = async () => {
       numberRating: 0
     })
 
-    submitMessages.value.success = 'Charity creatiion successful! Refresh the page.'
+    submitMessages.value.success = 'Charity creation successful! Refresh the page.'
     submitMessages.value.failure = null
     clearForm()
   } catch (error) {
     submitMessages.value.success = null
     submitMessages.value.failure = 'Charity creation failed! Try again.'
+  }
+}
+
+const submitModifyCharity = async () => {
+  validateModifyCharityName(true)
+  validateModifyCharityLocation(true)
+  const charity = modifyCharityFormData.value.charity
+  const name = modifyCharityFormData.value.name
+  const location = modifyCharityFormData.value.location
+
+  try {
+    const q = query(collection(db, 'charities'), where('name', '==', charity))
+    const querySnapshot = await getDocs(q)
+
+    if (querySnapshot.empty) {
+      submitMessages.value.success = null
+      submitMessages.value.failure = 'Charity not found.'
+      return
+    }
+    const docRef = querySnapshot.docs[0].ref
+
+    await updateDoc(docRef, {
+      name: name,
+      location: location
+    })
+
+    submitMessages.value.success = 'Charity modification successful! Refresh the page.'
+    submitMessages.value.failure = null
+    clearForm()
+  } catch (error) {
+    submitMessages.value.success = null
+    submitMessages.value.failure = 'Charity modification failed! Try again.'
+  }
+}
+
+// Submit Delete Charity functions
+const submitDeleteCharity = async () => {
+  const charity = deleteCharityFormData.value.charity
+
+  try {
+    const q = query(collection(db, 'charities'), where('name', '==', charity))
+    const querySnapshot = await getDocs(q)
+
+    if (querySnapshot.empty) {
+      submitMessages.value.success = null
+      submitMessages.value.failure = 'Charity not found.'
+      return
+    }
+    const docRef = querySnapshot.docs[0].ref
+
+    await deleteDoc(docRef)
+
+    submitMessages.value.success = 'Delete charity successful! Refresh the page.'
+    submitMessages.value.failure = null
+    clearForm()
+  } catch (error) {
+    submitMessages.value.success = null
+    submitMessages.value.failure = 'Delete charity failed! Try again.'
   }
 }
 
