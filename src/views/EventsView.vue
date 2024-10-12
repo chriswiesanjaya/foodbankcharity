@@ -17,18 +17,13 @@
         </div>
 
         <!-- Buttons for user -->
-        <div class="col py-5 text-center" v-if="role == 'user'">
-          <!-- Donate button -->
+        <div class="col py-5 text-center" v-if="role === 'user'">
           <button type="button" class="btn btn-secondary me-3" @click="toggleDonateButton">
             Donate
           </button>
-
-          <!-- Volunteer button -->
           <button type="button" class="btn btn-secondary me-3" @click="toggleVolunteerButton">
             Volunteer
           </button>
-
-          <!-- Rate button -->
           <button type="button" class="btn btn-secondary" @click="toggleRateButton">Rate</button>
         </div>
 
@@ -38,7 +33,6 @@
           <div v-if="showForms.donate">
             <h3 class="text-center">Donate to an Event</h3>
             <form @submit.prevent="submitDonate">
-              <!-- Donate form charity -->
               <div class="row mb-3">
                 <label for="charity" class="form-label">Charity</label>
                 <select class="form-select" id="charity" v-model="donateFormData.charity" required>
@@ -47,8 +41,6 @@
                   </option>
                 </select>
               </div>
-
-              <!-- Donate form amount -->
               <div class="row mb-3">
                 <label for="amount" class="form-label">Amount (AUD)</label>
                 <input
@@ -62,18 +54,12 @@
                 />
               </div>
               <div v-if="userErrors.amount" class="text-danger mb-3">{{ userErrors.amount }}</div>
-
-              <!-- Donate form Submit Button -->
               <div class="row mb-3">
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
-
-              <!-- Donate form Submit failure message -->
               <div v-if="submitMessages.failure" class="text-danger text-center">
                 {{ submitMessages.failure }}
               </div>
-
-              <!-- Donate form Submit success message -->
               <div v-if="submitMessages.success" class="text-success text-center">
                 {{ submitMessages.success }}
               </div>
@@ -84,7 +70,6 @@
           <div v-if="showForms.volunteer">
             <h3 class="text-center">Apply for Volunteer</h3>
             <form @submit.prevent="submitVolunteer">
-              <!-- Volunteer form charity -->
               <div class="row mb-3">
                 <label for="charity" class="form-label">Charity</label>
                 <select
@@ -98,8 +83,6 @@
                   </option>
                 </select>
               </div>
-
-              <!-- Volunteer form job -->
               <div class="row mb-3">
                 <label for="job" class="form-label">Job</label>
                 <select class="form-select" id="job" v-model="volunteerFormData.job" required>
@@ -108,18 +91,12 @@
                   <option value="food-distribution">Food Distribution</option>
                 </select>
               </div>
-
-              <!-- Volunteer form Submit Button -->
               <div class="row mb-3">
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
-
-              <!-- Volunteer form Submit failure message -->
               <div v-if="submitMessages.failure" class="text-danger text-center">
                 {{ submitMessages.failure }}
               </div>
-
-              <!-- Volunteer form Submit success message -->
               <div v-if="submitMessages.success" class="text-success text-center">
                 {{ submitMessages.success }}
               </div>
@@ -130,7 +107,6 @@
           <div v-if="showForms.rate">
             <h3 class="text-center">Rate an Event</h3>
             <form @submit.prevent="submitRate">
-              <!-- Rate form charity -->
               <div class="row mb-3">
                 <label for="charity" class="form-label">Charity</label>
                 <select class="form-select" id="charity" v-model="rateFormData.charity" required>
@@ -139,8 +115,6 @@
                   </option>
                 </select>
               </div>
-
-              <!-- Rate form rate -->
               <div class="row mb-3">
                 <label for="rate" class="form-label">Rating</label>
                 <select class="form-select" id="rate" v-model="rateFormData.rate" required>
@@ -151,8 +125,6 @@
                   <option value="1">1 - Very Poor</option>
                 </select>
               </div>
-
-              <!-- Rate form review -->
               <div class="row mb-3">
                 <label for="review" class="form-label">Review</label>
                 <textarea
@@ -163,21 +135,15 @@
                   required
                   @blur="() => validateRateReview(true)"
                   @input="() => validateRateReview(false)"
-                />
+                ></textarea>
               </div>
               <div v-if="userErrors.review" class="text-danger mb-3">{{ userErrors.review }}</div>
-
-              <!-- Volunteer form Submit Button -->
               <div class="row mb-3">
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
-
-              <!-- Volunteer form Submit failure message -->
               <div v-if="submitMessages.failure" class="text-danger text-center">
                 {{ submitMessages.failure }}
               </div>
-
-              <!-- Volunteer form Submit success message -->
               <div v-if="submitMessages.success" class="text-success text-center">
                 {{ submitMessages.success }}
               </div>
@@ -186,8 +152,7 @@
         </div>
 
         <!-- Buttons for admin -->
-        <div class="col py-5 text-center" v-if="role == 'admin'">
-          <!-- Create Event button for user -->
+        <div class="col py-5 text-center" v-if="role === 'admin'">
           <button type="button" class="btn btn-secondary" @click="toggleCreateEventButton">
             Create Event
           </button>
@@ -198,7 +163,6 @@
           <div v-if="showForms.createEvent">
             <h3 class="text-center">Create an Event</h3>
             <form @submit.prevent="submitCreateEvent">
-              <!-- Create Event form name -->
               <div class="row mb-3">
                 <label for="name" class="form-label">Name</label>
                 <input
@@ -212,8 +176,6 @@
                 />
               </div>
               <div v-if="adminErrors.name" class="text-danger mb-3">{{ adminErrors.name }}</div>
-
-              <!-- Create Event form location -->
               <div class="row mb-3">
                 <label for="location" class="form-label">Location</label>
                 <input
@@ -229,8 +191,6 @@
               <div v-if="adminErrors.location" class="text-danger mb-3">
                 {{ adminErrors.location }}
               </div>
-
-              <!-- Create Event form date -->
               <div class="row mb-3">
                 <label for="date" class="form-label">Date</label>
                 <DatePicker
@@ -242,21 +202,13 @@
                   @input="() => validateCreateEventDate(false)"
                 />
               </div>
-              <div v-if="adminErrors.date" class="text-danger mb-3">
-                {{ adminErrors.date }}
-              </div>
-
-              <!-- Create Event form Submit Button -->
+              <div v-if="adminErrors.date" class="text-danger mb-3">{{ adminErrors.date }}</div>
               <div class="row mb-3">
                 <button type="submit" class="btn btn-primary">Submit</button>
               </div>
-
-              <!-- Create Event form Submit failure message -->
               <div v-if="submitMessages.failure" class="text-danger text-center">
                 {{ submitMessages.failure }}
               </div>
-
-              <!-- Create Event form Submit success message -->
               <div v-if="submitMessages.success" class="text-success text-center">
                 {{ submitMessages.success }}
               </div>

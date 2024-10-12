@@ -6,7 +6,7 @@
       <div class="col align-items-center justify-content-start">
         <p><strong>FOOD BANK CHARITY</strong></p>
         <p>📍 Melbourne, VIC 3000</p>
-        <p>✉️ hi@fbc.com</p>
+        <p>✉️ chriswiesanjaya@gmail.com</p>
         <p>📱 +61 123456789</p>
         <p>⏰ 9:00am - 5:00pm</p>
       </div>
