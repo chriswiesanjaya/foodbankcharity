@@ -331,11 +331,14 @@ const userErrors = ref({ amount: null })
 const adminErrors = ref({ name: null, location: null })
 
 // Firebase Functions
-const submitDonateFunction = 'https://submitdonation-ltpm7ejipa-uc.a.run.app'
-const submitVolunteerFunction = 'https://submitvolunteer-ltpm7ejipa-uc.a.run.app'
-const submitRateFunction = 'https://submitrate-ltpm7ejipa-uc.a.run.app'
-const submitCreateCharityFunction = 'https://submitcreatecharity-ltpm7ejipa-uc.a.run.app'
+const submitDonateKey = 'https://submitdonation-ltpm7ejipa-uc.a.run.app'
+const submitVolunteerKey = 'https://submitvolunteer-ltpm7ejipa-uc.a.run.app'
+const submitRateKey = 'https://submitrate-ltpm7ejipa-uc.a.run.app'
+const submitCreateCharityKey = 'https://submitcreatecharity-ltpm7ejipa-uc.a.run.app'
+const submitModifyCharityKey = 'https://submitmodifycharity-ltpm7ejipa-uc.a.run.app'
+const submitDeleteCharityKey = 'https://submitdeletecharity-ltpm7ejipa-uc.a.run.app'
 
+// Fetch charities from Firestore
 const fetchCharities = async () => {
   const querySnapshot = await getDocs(collection(db, 'charities'))
 
@@ -489,7 +492,7 @@ const submitDonate = async () => {
       return
     }
 
-    const response = await axios.post(submitDonateFunction, {
+    const response = await axios.post(submitDonateKey, {
       name,
       amount
     })
@@ -508,7 +511,7 @@ const submitVolunteer = async () => {
   const name = volunteerFormData.value.charity
 
   try {
-    const response = await axios.post(submitVolunteerFunction, {
+    const response = await axios.post(submitVolunteerKey, {
       name
     })
 
@@ -527,7 +530,7 @@ const submitRate = async () => {
   const rating = parseInt(rateFormData.value.rate, 10)
 
   try {
-    const response = await axios.post(submitRateFunction, {
+    const response = await axios.post(submitRateKey, {
       name,
       rating
     })
@@ -556,7 +559,7 @@ const submitCreateCharity = async () => {
       return
     }
 
-    const response = await axios.post(submitCreateCharityFunction, {
+    const response = await axios.post(submitCreateCharityKey, {
       name,
       location
     })
@@ -583,27 +586,29 @@ const submitModifyCharity = async () => {
   const location = modifyCharityFormData.value.location
 
   try {
-    const q = query(collection(db, 'charities'), where('name', '==', charity))
-    const querySnapshot = await getDocs(q)
-
-    if (querySnapshot.empty) {
+    if (adminErrors.value.name || adminErrors.value.location) {
       submitMessages.value.success = null
-      submitMessages.value.failure = 'Charity not found.'
+      submitMessages.value.failure =
+        'Modify charity failed! Please enter a valid name and location.'
       return
     }
-    const docRef = querySnapshot.docs[0].ref
 
-    await updateDoc(docRef, {
-      name: name,
-      location: location
+    const response = await axios.post(submitModifyCharityKey, {
+      charity,
+      name,
+      location
     })
 
-    submitMessages.value.success = 'Charity modification successful! Refresh the page.'
+    submitMessages.value.success = response.data
     submitMessages.value.failure = null
     clearForm()
   } catch (error) {
+    if (error.response && error.response.status === 404) {
+      submitMessages.value.failure = 'Charity not found.'
+    } else {
+      submitMessages.value.failure = 'Charity modification failed! Try again.'
+    }
     submitMessages.value.success = null
-    submitMessages.value.failure = 'Charity modification failed! Try again.'
   }
 }
 
@@ -612,24 +617,20 @@ const submitDeleteCharity = async () => {
   const charity = deleteCharityFormData.value.charity
 
   try {
-    const q = query(collection(db, 'charities'), where('name', '==', charity))
-    const querySnapshot = await getDocs(q)
+    const response = await axios.post(submitDeleteCharityKey, {
+      charity
+    })
 
-    if (querySnapshot.empty) {
-      submitMessages.value.success = null
-      submitMessages.value.failure = 'Charity not found.'
-      return
-    }
-    const docRef = querySnapshot.docs[0].ref
-
-    await deleteDoc(docRef)
-
-    submitMessages.value.success = 'Delete charity successful! Refresh the page.'
+    submitMessages.value.success = response.data
     submitMessages.value.failure = null
     clearForm()
   } catch (error) {
+    if (error.response && error.response.status === 404) {
+      submitMessages.value.failure = 'Charity not found.'
+    } else {
+      submitMessages.value.failure = 'Delete charity failed! Try again.'
+    }
     submitMessages.value.success = null
-    submitMessages.value.failure = 'Delete charity failed! Try again.'
   }
 }
 

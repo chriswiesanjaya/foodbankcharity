@@ -78,7 +78,7 @@ exports.submitVolunteer = onRequest((req, res) => {
 exports.submitRate = onRequest((req, res) => {
   cors(req, res, async () => {
     if (req.method !== 'POST') {
-      return res.status(405).send('Method Not Allowed')
+      return res.status(405).send('Method Not Allowed.')
     }
 
     const { name, rating } = req.body
@@ -87,16 +87,16 @@ exports.submitRate = onRequest((req, res) => {
     try {
       const snapshot = await charityRef.get()
       if (snapshot.empty) {
-        return res.status(404).send('Charity not found')
+        return res.status(404).send('Charity not found.')
       }
       const docRef = snapshot.docs[0].ref
       await docRef.update({
         totalRating: admin.firestore.FieldValue.increment(rating),
         numberRating: admin.firestore.FieldValue.increment(1)
       })
-      return res.status(201).send('Rating submitted successfully')
+      return res.status(201).send('Rating submitted successful! Refresh the page.')
     } catch (error) {
-      return res.status(500).send('Error submitting rating')
+      return res.status(500).send('Error submitting rating,')
     }
   })
 })
@@ -105,7 +105,7 @@ exports.submitRate = onRequest((req, res) => {
 exports.submitCreateCharity = onRequest((req, res) => {
   cors(req, res, async () => {
     if (req.method !== 'POST') {
-      return res.status(405).send('Method Not Allowed')
+      return res.status(405).send('Method Not Allowed.')
     }
 
     const { name, location } = req.body
@@ -114,7 +114,7 @@ exports.submitCreateCharity = onRequest((req, res) => {
     try {
       const snapshot = await charityRef.get()
       if (!snapshot.empty) {
-        return res.status(409).send('Charity with this name already exists')
+        return res.status(409).send('Charity with this name already exists.')
       }
 
       await admin.firestore().collection('charities').add({
@@ -126,9 +126,66 @@ exports.submitCreateCharity = onRequest((req, res) => {
         numberRating: 0
       })
 
-      return res.status(201).send('Charity created successfully')
+      return res.status(201).send('Charity created successful! Refresh the page.')
     } catch (error) {
-      return res.status(500).send('Error creating charity')
+      return res.status(500).send('Error creating charity.')
+    }
+  })
+})
+
+// Submit Modify Charity function
+exports.submitModifyCharity = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).send('Method Not Allowed.')
+    }
+
+    const { charity, name, location } = req.body
+    const charityRef = admin.firestore().collection('charities').where('name', '==', charity)
+
+    try {
+      const snapshot = await charityRef.get()
+
+      if (snapshot.empty) {
+        return res.status(404).send('Charity not found.')
+      }
+
+      const docRef = snapshot.docs[0].ref
+      await docRef.update({
+        name: name,
+        location: location
+      })
+
+      return res.status(200).send('Charity modification successful! Refresh the page.')
+    } catch (error) {
+      return res.status(500).send('Error modifying charity.')
+    }
+  })
+})
+
+// Submit Delete Charity function
+exports.submitDeleteCharity = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).send('Method Not Allowed.')
+    }
+
+    const { charity } = req.body
+    const charityRef = admin.firestore().collection('charities').where('name', '==', charity)
+
+    try {
+      const snapshot = await charityRef.get()
+
+      if (snapshot.empty) {
+        return res.status(404).send('Charity not found.')
+      }
+
+      const docRef = snapshot.docs[0].ref
+      await docRef.delete()
+
+      return res.status(200).send('Delete charity successful! Refresh the page.')
+    } catch (error) {
+      return res.status(500).send('Error deleting charity.')
     }
   })
 })
