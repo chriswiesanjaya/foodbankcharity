@@ -366,14 +366,15 @@ const validateCreateEventLocation = (blur) => {
 // Submit Donate functions
 const submitDonate = async () => {
   validateDonateAmount(true)
-
   const charity = donateFormData.value.charity
   const amount = parseInt(donateFormData.value.amount, 10)
+
   try {
     const q = query(collection(db, 'events'), where('name', '==', charity))
     const querySnapshot = await getDocs(q)
 
     if (querySnapshot.empty) {
+      submitMessages.value.success = null
       submitMessages.value.failure = 'Charity not found.'
       return
     }
@@ -392,14 +393,31 @@ const submitDonate = async () => {
   }
 }
 
+// Submit Volunteer functions
 const submitVolunteer = async () => {
   const charity = volunteerFormData.value.charity
-  const job = volunteerFormData.value.job
+
   try {
-    // Add volunteer logic here
-    submitMessages.value.success = 'Volunteer application successful!'
+    const q = query(collection(db, 'events'), where('name', '==', charity))
+    const querySnapshot = await getDocs(q)
+
+    if (querySnapshot.empty) {
+      submitMessages.value.success = null
+      submitMessages.value.failure = 'Charity not found.'
+      return
+    }
+    const docRef = querySnapshot.docs[0].ref
+
+    await updateDoc(docRef, {
+      volunteer: increment(1)
+    })
+
+    submitMessages.value.success = 'Volunteer application successful! Refresh the page'
+    submitMessages.value.failure = null
+    clearForm()
   } catch (error) {
-    submitMessages.value.failure = 'Volunteer application failed: ' + error.message
+    submitMessages.value.success = null
+    submitMessages.value.failure = 'Volunteer application failed! Try again.'
   }
 }
 

@@ -177,6 +177,17 @@ const submitDonate = () => {
   }
 }
 
+const submitVolunteerF = async () => {
+  const charity = volunteerFormData.value.charity
+  const job = volunteerFormData.value.job
+  try {
+    // Add volunteer logic here
+    submitMessages.value.success = 'Volunteer application successful!'
+  } catch (error) {
+    submitMessages.value.failure = 'Volunteer application failed: ' + error.message
+  }
+}
+
 // Submit Volunteer function
 const submitVolunteer = () => {
   // Get existing local storage events
