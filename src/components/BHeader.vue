@@ -51,6 +51,11 @@
           >
         </li>
 
+        <!-- Map Navigation -->
+        <li class="nav-item">
+          <router-link to="/map" class="nav-link" active-class="active">Map</router-link>
+        </li>
+
         <!-- About Us Navigation -->
         <li class="nav-item">
           <router-link to="/aboutus" class="nav-link" active-class="active">About Us</router-link>

@@ -8,9 +8,10 @@ import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import FirebaseLoginView from '@/views/FirebaseLoginView.vue'
 import FirebaseRegisterView from '@/views/FirebaseRegisterView.vue'
-import AdminDashboard from '@/views/AdminDashboard.vue'
+import AdminDashboard from '@/views/AdminDashboardView.vue'
 import GetCharityCountAPI from '@/views/GetCharityCountAPI.vue'
 import GetAllCharitiesAPI from '@/views/GetAllCharitiesAPI.vue'
+import MapView from '@/views/MapView.vue'
 
 const routes = [
   {
@@ -66,6 +67,12 @@ const routes = [
     path: '/AdminDashboard',
     name: 'AdminDashboard',
     component: AdminDashboard,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/map',
+    name: 'Map',
+    component: MapView,
     meta: { requiresAuth: true }
   },
   {
