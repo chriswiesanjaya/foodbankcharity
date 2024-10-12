@@ -73,11 +73,18 @@ import axios from 'axios'
 
 const db = getFirestore()
 const users = ref([])
+const newsletter = ref([])
 
 // Fetch users from Firestore
 const fetchUsers = async () => {
   const querySnapshot = await getDocs(collection(db, 'users'))
   users.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+}
+
+// Fetch newsletter emails from Firestore
+const fetchNewsletter = async () => {
+  const querySnapshot = await getDocs(collection(db, 'newsletter'))
+  newsletter.value = querySnapshot.docs.map((doc) => doc.data().email)
 }
 
 // Form data
@@ -113,12 +120,14 @@ const submitNewsletter = async () => {
 
   if (!errors.value.subject && !errors.value.message) {
     try {
-      await axios.post('http://localhost:3000/send-email', {
-        to: 'chriswiesanjaya@gmail.com',
-        from: 'chriswiesanjaya@gmail.com',
-        subject: formData.value.subject,
-        text: formData.value.message
-      })
+      for (const recipient of newsletter.value) {
+        await axios.post('http://localhost:3000/send-email', {
+          to: recipient,
+          from: 'chriswiesanjaya@gmail.com',
+          subject: formData.value.subject,
+          text: formData.value.message
+        })
+      }
 
       submitNewsletterMessages.value.success = 'Newsletter has been sent successfully.'
       submitNewsletterMessages.value.failure = null
@@ -165,7 +174,10 @@ const validateMessage = (blur) => {
 }
 
 // Initial fetch of users
-onMounted(fetchUsers)
+onMounted(() => {
+  fetchUsers()
+  fetchNewsletter()
+})
 </script>
 
 <style scoped>
