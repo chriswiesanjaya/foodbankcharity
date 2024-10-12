@@ -1,9 +1,19 @@
 <template>
   <div class="container">
     <!-- Food Bank Charity Header -->
-    <div class="row foodbank-header py-3">
+    <div class="row foodbank-header">
       <!-- Left Section -->
-      <div class="col text-start"></div>
+      <div class="col text-start">
+        <label class="form-check form-switch">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            :checked="isDarkMode"
+            @change="toggleDarkMode"
+          />
+          <span class="form-check-label">Dark Mode</span>
+        </label>
+      </div>
 
       <!-- Center Section -->
       <div class="col text-center">
@@ -65,7 +75,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, defineEmits } from 'vue'
 import { useRouter } from 'vue-router'
 import { getAuth, signOut } from 'firebase/auth'
 
@@ -75,26 +85,33 @@ const auth = getAuth()
 const isAuthenticated = ref(localStorage.getItem('isAuthenticated') === 'true')
 const role = ref(localStorage.getItem('role'))
 
+const props = defineProps({
+  isDarkMode: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const emit = defineEmits()
+
+const toggleDarkMode = () => {
+  emit('toggleDarkMode')
+}
+
 // Firebase Log Out
 const logout = () => {
   signOut(auth)
     .then(() => {
-      // Remove email and role in local storage
       isAuthenticated.value = false
       localStorage.removeItem('email')
       localStorage.removeItem('role')
       localStorage.removeItem('isAuthenticated')
 
-      // Successful logout message
       console.log('Firebase Sign Out Successful!')
-      console.log(auth.currentUser)
-
-      // Redirect to /FirebaseLogin
       router.push('/FirebaseLogin').then(() => {
         window.location.reload()
       })
     })
-    // Unsuccessful logout message
     .catch((error) => {
       console.log(error.code)
     })

@@ -31,11 +31,26 @@ async function uploadCharities() {
   }
 }
 
-// Call the function to upload charities on startup
+// Call Upload Charities function
 uploadCharities()
 
 const app = createApp(App)
-app.use(PrimeVue, { theme: { preset: Aura } })
-app.use(router)
 
+// Set up PrimeVue with dark mode configuration
+app.use(PrimeVue, {
+  theme: {
+    preset: Aura,
+    options: {
+      darkModeSelector: '.my-app-dark'
+    }
+  }
+})
+
+// Check localStorage for dark mode preference and apply it
+const savedMode = localStorage.getItem('darkMode')
+if (savedMode === 'true') {
+  document.documentElement.classList.add('my-app-dark')
+}
+
+app.use(router)
 app.mount('#app')
