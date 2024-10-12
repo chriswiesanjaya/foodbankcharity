@@ -21,3 +21,29 @@ exports.helloWorld = onRequest((request, response) => {
   logger.info('Hello logs!', { structuredData: true })
   response.send('Hello from Firebase!')
 })
+
+// Submit Donation functions
+exports.submitDonation = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).send('Method Not Allowed.')
+    }
+
+    const { name, amount } = req.body
+    const charityRef = admin.firestore().collection('charities').where('name', '==', name)
+
+    try {
+      const snapshot = await charityRef.get()
+      if (snapshot.empty) {
+        return res.status(404).send('Charity not found.')
+      }
+      const docRef = snapshot.docs[0].ref
+      await docRef.update({
+        donation: admin.firestore.FieldValue.increment(amount)
+      })
+      return res.status(201).send('Donation successful! Refresh the page.')
+    } catch (error) {
+      return res.status(500).send('Error submitting donation.')
+    }
+  })
+})

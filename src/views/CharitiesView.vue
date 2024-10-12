@@ -318,7 +318,6 @@ const rateFormData = ref({ charity: '', rate: '' })
 const createCharityFormData = ref({ name: '', location: '' })
 const modifyCharityFormData = ref({ charity: '', name: '', location: '' })
 const deleteCharityFormData = ref({ charity: '' })
-
 const showForms = ref({
   donate: false,
   volunteer: false,
@@ -330,6 +329,9 @@ const showForms = ref({
 const submitMessages = ref({ success: null, failure: null })
 const userErrors = ref({ amount: null })
 const adminErrors = ref({ name: null, location: null })
+
+// Firebase Functions
+const submitDonateFunction = 'https://submitdonation-ltpm7ejipa-uc.a.run.app'
 
 const fetchCharities = async () => {
   const querySnapshot = await getDocs(collection(db, 'charities'))
@@ -471,28 +473,25 @@ const validateModifyCharityLocation = (blur) => {
   }
 }
 
-// Submit Donate functions
+// Submit Donate function
 const submitDonate = async () => {
   validateDonateAmount(true)
-  const charity = donateFormData.value.charity
+  const name = donateFormData.value.charity
   const amount = parseInt(donateFormData.value.amount, 10)
 
   try {
-    const q = query(collection(db, 'charities'), where('name', '==', charity))
-    const querySnapshot = await getDocs(q)
-
-    if (querySnapshot.empty) {
+    if (userErrors.value.amount) {
       submitMessages.value.success = null
-      submitMessages.value.failure = 'Charity not found.'
+      submitMessages.value.failure = 'Donation failed! Please enter a valid amount and try again.'
       return
     }
-    const docRef = querySnapshot.docs[0].ref
 
-    await updateDoc(docRef, {
-      donation: increment(amount)
+    const response = await axios.post(submitDonateFunction, {
+      name,
+      amount
     })
 
-    submitMessages.value.success = 'Donation successful! Refresh the page.'
+    submitMessages.value.success = response.data
     submitMessages.value.failure = null
     clearForm()
   } catch (error) {
