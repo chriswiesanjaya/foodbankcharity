@@ -29,9 +29,7 @@
         <button v-if="isAuthenticated" @click="logout1" class="btn btn-secondary">Logout</button> -->
 
         <!-- Login / Logout Button -->
-        <router-link v-if="!isAuthenticated" to="/FirebaseLogin" class="btn btn-primary"
-          >Login</router-link
-        >
+        <router-link v-if="!isAuthenticated" to="/login" class="btn btn-primary">Login</router-link>
         <button v-if="isAuthenticated" @click="logout" class="btn btn-secondary">Logout</button>
       </div>
     </div>
@@ -96,7 +94,7 @@ const toggleDarkMode = () => {
   emit('toggleDarkMode')
 }
 
-// Firebase Log Out
+// Log Out function
 const logout = () => {
   signOut(auth)
     .then(() => {
@@ -106,7 +104,7 @@ const logout = () => {
       localStorage.removeItem('isAuthenticated')
 
       console.log('Firebase Sign Out Successful!')
-      router.push('/FirebaseLogin').then(() => {
+      router.push('/login').then(() => {
         window.location.reload()
       })
     })

@@ -44,7 +44,7 @@
           <!-- Register Navigation -->
           <div class="text-center mb-3">
             Don't have an account?
-            <router-link to="/FirebaseRegister" class="text-primary"> Register</router-link>
+            <router-link to="/register" class="text-primary"> Register</router-link>
           </div>
           <div v-if="errorMessage" class="text-danger text-center">{{ errorMessage }}</div>
         </form>

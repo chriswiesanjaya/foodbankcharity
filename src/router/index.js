@@ -1,11 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import AboutUsView from '../views/AboutUsView.vue'
-import ContactUsView from '@/views/ContactUsView.vue'
 import CharitiesView from '@/views/CharitiesView.vue'
 import ProfileView from '@/views/ProfileView.vue'
-import LoginView from '@/views/LoginView.vue'
-import RegisterView from '@/views/RegisterView.vue'
 import FirebaseLoginView from '@/views/FirebaseLoginView.vue'
 import FirebaseRegisterView from '@/views/FirebaseRegisterView.vue'
 import AdminDashboard from '@/views/AdminDashboardView.vue'
@@ -26,12 +23,6 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/contactus',
-    name: 'ContactUs',
-    component: ContactUsView,
-    meta: { requiresAuth: true }
-  },
-  {
     path: '/charities',
     name: 'Charities',
     component: CharitiesView,
@@ -46,21 +37,11 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: LoginView
+    component: FirebaseLoginView
   },
   {
     path: '/register',
     name: 'Register',
-    component: RegisterView
-  },
-  {
-    path: '/FirebaseLogin',
-    name: 'FirebaseLogin',
-    component: FirebaseLoginView
-  },
-  {
-    path: '/FirebaseRegister',
-    name: 'FirebaseRegister',
     component: FirebaseRegisterView
   },
   {
@@ -108,12 +89,6 @@ router.beforeEach((to, from, next) => {
     return
   }
 
-  // Redirect authenticated users away from Login and Register to Profile
-  if (isAuthenticated && (to.name === 'FirebaseLogin' || to.name === 'FirebaseRegister')) {
-    next({ name: 'Profile' })
-    return
-  }
-
   // Redirect users away from AdminDashboard to Profile
   if (role !== 'admin' && to.name === 'AdminDashboard') {
     next({ name: 'Profile' })
@@ -122,7 +97,7 @@ router.beforeEach((to, from, next) => {
 
   // Redirect unauthenticated users away from protected pages to Login
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next({ name: 'FirebaseLogin' })
+    next({ name: 'Login' })
   } else {
     next()
   }

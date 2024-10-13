@@ -76,7 +76,7 @@
           <!-- Login Navigation -->
           <div class="text-center mb-3">
             Already have an account?
-            <router-link to="/FirebaseLogin" class="text-primary"> Login</router-link>
+            <router-link to="/login" class="text-primary"> Login</router-link>
           </div>
         </form>
       </div>
