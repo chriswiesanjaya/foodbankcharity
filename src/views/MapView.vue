@@ -1,6 +1,6 @@
 <template>
+  <!-- Map Section -->
   <div class="container">
-    <!-- Map Section -->
     <div class="row">
       <div class="col-12">
         <div id="map" class="my-4" style="height: 500px"></div>
@@ -8,19 +8,26 @@
     </div>
 
     <!-- Charity Selector -->
-    <div class="row mb-3">
-      <label for="charitySelect" class="form-label">Select a Charity</label>
-      <select
-        id="charitySelect"
-        class="form-select"
-        v-model="selectedCharity"
-        @change="updateLocation"
-      >
-        <option disabled value="">Select a charity</option>
-        <option v-for="charity in charities" :key="charity.id" :value="charity">
-          {{ charity.name }}
-        </option>
-      </select>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 offset-md-2">
+          <h1 class="text-center">Select a Charity</h1>
+          <div class="row mb-3">
+            <label for="charitySelect" class="form-label">Charity</label>
+            <select
+              id="charitySelect"
+              class="form-select"
+              v-model="selectedCharity"
+              @change="updateLocation"
+            >
+              <option disabled value="">Select a charity</option>
+              <option v-for="charity in charities" :key="charity.id" :value="charity">
+                {{ charity.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Location Output -->
@@ -168,5 +175,12 @@ function degreesToRadians(degrees) {
 #map {
   width: 100%;
   height: 500px;
+}
+.container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 80vw;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 10px;
 }
 </style>
