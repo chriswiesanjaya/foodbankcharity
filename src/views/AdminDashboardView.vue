@@ -160,7 +160,7 @@
 import { ref, onMounted } from 'vue'
 import { getFirestore, collection, getDocs } from 'firebase/firestore'
 import UserTable from '../components/UserTable.vue'
-import CharityChart from '../components/CharityChart.vue' // Import the CharityChart component
+import CharityChart from '../components/CharityChart.vue'
 import axios from 'axios'
 
 const db = getFirestore()
@@ -233,6 +233,9 @@ const addAttachment = () => {
     if (selectedFile) {
       attachment.value = selectedFile
       attachmentName.value = selectedFile.name
+      console.log(attachment.value)
+      console.log(attachmentName.value)
+      console.log(selectedFile.type)
     }
   }
   fileInput.click()

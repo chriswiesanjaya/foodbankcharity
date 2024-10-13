@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import Chart from 'primevue/chart'
 
 // Define the props
@@ -97,11 +97,6 @@ const updateChart = () => {
     ]
   }
 }
-
-// Initial chart setup
-onMounted(() => {
-  updateChart()
-})
 </script>
 
 <style scoped>

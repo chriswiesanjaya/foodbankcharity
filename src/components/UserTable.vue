@@ -41,7 +41,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import SelectButton from 'primevue/selectbutton' // Import SelectButton
+import SelectButton from 'primevue/selectbutton'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 
