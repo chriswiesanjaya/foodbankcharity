@@ -175,7 +175,6 @@ const charityComparison = ref({
 })
 const newsletter = ref([])
 const attachment = ref(null)
-const attachmentContent = ref('')
 const attachmentName = ref('')
 
 const formData = ref({
@@ -260,7 +259,21 @@ const submitNewsletter = async () => {
           payload.attachment = base64data // Send this to the server
         }
 
-        await sendEmail(payload) // Wait for the email to send before moving to the next recipient
+        // Call the Cloudflare Worker API instead of Firebase function
+        const response = await axios.post(
+          'https://delicate-dust-f011.chriswiesanjaya.workers.dev/',
+          payload,
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+
+        // Optionally handle the response if needed
+        if (response.status === 200) {
+          console.log('Email sent successfully:', response.data)
+        }
       }
 
       submitNewsletterMessages.value.success = 'Newsletter has been sent successfully.'
@@ -284,15 +297,6 @@ const readFileAsDataURL = (file) => {
     fileReader.onloadend = () => resolve(fileReader.result)
     fileReader.onerror = () => reject(new Error('Failed to read file'))
     fileReader.readAsDataURL(file)
-  })
-}
-
-// Function to send email
-const sendEmail = async (payload) => {
-  await axios.post('http://localhost:3000/send-email', payload, {
-    headers: {
-      'Content-Type': 'application/json'
-    }
   })
 }
 

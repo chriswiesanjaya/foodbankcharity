@@ -11,8 +11,10 @@ const { onRequest } = require('firebase-functions/v2/https')
 const logger = require('firebase-functions/logger')
 const admin = require('firebase-admin')
 const cors = require('cors')({ origin: true })
+const sgMail = require('@sendgrid/mail')
 
 admin.initializeApp()
+sgMail.setApiKey('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')
 
 // Create and deploy your first functions
 // https://firebase.google.com/docs/functions/get-started
@@ -232,6 +234,49 @@ exports.getAllCharities = onRequest(async (req, res) => {
     } catch (error) {
       console.error('Error fetching charities: ', error.message)
       res.status(500).send('Error fetching charities')
+    }
+  })
+})
+
+// Send email newsletter
+exports.sendEmail = onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).send('Method Not Allowed.')
+    }
+
+    const { to, from, subject, text, attachment } = req.body
+
+    const msg = {
+      to,
+      from,
+      subject,
+      text,
+      attachments: []
+    }
+
+    if (attachment) {
+      const matches = attachment.match(/^data:([A-Za-z-+/]+);base64,(.+)$/)
+      if (matches) {
+        const content = matches[2]
+        const filename = `attachment_${Date.now()}.png`
+        const mimeType = matches[1]
+
+        msg.attachments.push({
+          content,
+          filename,
+          type: mimeType,
+          disposition: 'attachment'
+        })
+      }
+    }
+
+    try {
+      await sgMail.send(msg)
+      return res.status(200).send('Email sent')
+    } catch (error) {
+      console.error('SendGrid error:', error)
+      return res.status(500).send('Error sending email')
     }
   })
 })
