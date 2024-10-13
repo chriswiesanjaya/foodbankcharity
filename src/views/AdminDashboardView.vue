@@ -259,7 +259,7 @@ const submitNewsletter = async () => {
           payload.attachment = base64data // Send this to the server
         }
 
-        // Call the Cloudflare Worker API instead of Firebase function
+        // Call the Cloudflare Worker API
         const response = await axios.post(
           'https://delicate-dust-f011.chriswiesanjaya.workers.dev/',
           payload,
