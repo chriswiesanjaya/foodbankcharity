@@ -2,6 +2,14 @@
   <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
+        <h1 class="text-center">Login</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
         <!-- Login Form -->
         <form @submit.prevent="login">
           <!-- Email -->

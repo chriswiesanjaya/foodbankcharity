@@ -114,7 +114,9 @@ function addUserMarker() {
 
 function fetchCharities() {
   getDocs(collection(db, 'charities')).then((querySnapshot) => {
-    charities.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+    charities.value = querySnapshot.docs
+      .map((doc) => ({ id: doc.id, ...doc.data() }))
+      .sort((a, b) => a.name.localeCompare(b.name))
   })
 }
 
