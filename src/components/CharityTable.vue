@@ -11,14 +11,21 @@
       paginator
       :rows="10"
       :rowsPerPageOptions="[5, 10, 15, 20]"
-      :globalFilterFields="['name', 'location']"
       tableStyle="min-width: 50rem"
     >
       <template #header>
         <div class="row py-3">
-          <div class="col text-start"></div>
-          <div class="col text-center">
-            <InputText v-model="filters.global.value" placeholder="Search" class="p-inputtext-sm" />
+          <div class="col text-start">
+            <InputText
+              v-model="filters.name.value"
+              placeholder="Search by Name"
+              class="p-inputtext-sm me-3"
+            />
+            <InputText
+              v-model="filters.location.value"
+              placeholder="Search by Location"
+              class="p-inputtext-sm"
+            />
           </div>
           <div class="col text-end">
             <Button label="Export CSV" @click="exportCSV" class="me-3" />
@@ -29,8 +36,22 @@
       <template #empty> No charities found. </template>
       <template #loading> Loading charities data. Please wait. </template>
 
-      <Column field="name" header="Charity Name" sortable exportHeader="Charity Name"></Column>
-      <Column field="location" header="Location" sortable exportHeader="Location"></Column>
+      <Column
+        field="name"
+        header="Charity Name"
+        sortable
+        filter
+        filterPlaceholder="Search by Charity Name"
+        :filterField="filters.name.value"
+      ></Column>
+      <Column
+        field="location"
+        header="Location"
+        sortable
+        filter
+        filterPlaceholder="Search by Location"
+        :filterField="filters.location.value"
+      ></Column>
       <Column field="donation" header="Donation (AUD)" sortable exportHeader="Donation"></Column>
       <Column field="volunteer" header="Volunteer" sortable exportHeader="Volunteer"></Column>
       <Column field="rating" header="Rating (out of 5)" sortable exportHeader="Rating"></Column>
@@ -44,7 +65,7 @@ import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
-import SelectButton from 'primevue/selectbutton' // Import SelectButton
+import SelectButton from 'primevue/selectbutton'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 
@@ -57,7 +78,8 @@ const props = defineProps({
 })
 
 const filters = ref({
-  global: { value: null, matchMode: 'contains' }
+  name: { value: null, matchMode: 'contains' },
+  location: { value: null, matchMode: 'contains' }
 })
 
 const dt = ref()
