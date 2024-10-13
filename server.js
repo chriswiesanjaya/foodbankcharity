@@ -5,17 +5,23 @@ import cors from 'cors'
 
 const app = express()
 const port = process.env.PORT || 3000
-app.use(cors()) // This allows all origins
 
 // Set SendGrid API key
 sgMail.setApiKey('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')
 
+// Middleware
+app.use(cors())
 app.use(bodyParser.json({ limit: '10mb' })) // Increase the limit for larger attachments
 
-// Endpoint to send email
-app.post('/send-email', async (req, res) => {
-  console.log('sending...')
+app.post('/send-email', (req, res) => {
   const { to, from, subject, text, attachment } = req.body
+
+  // Log the email details for debugging
+  console.log('Email details:', { to, from, subject, text, attachment })
+
+  if (!to) {
+    return res.status(400).send('Recipient email is required.')
+  }
 
   const msg = {
     to,
@@ -25,23 +31,37 @@ app.post('/send-email', async (req, res) => {
     attachments: []
   }
 
-  // Only add attachments if they are present
+  // Handle attachment if provided
   if (attachment) {
-    msg.attachments.push({
-      content: attachment.content.split(',')[1], // Extract the base64 part
-      filename: attachment.name, // Use the name from the attachment object
-      type: attachment.type, // Use the type from the attachment object
-      disposition: 'attachment'
-    })
+    const matches = attachment.match(/^data:([A-Za-z-+/]+);base64,(.+)$/)
+    if (matches) {
+      const content = matches[2] // base64 content
+      const filename = `attachment_${Date.now()}.png` // Change extension based on your needs
+      const mimeType = matches[1]
+
+      msg.attachments.push({
+        content, // base64 content
+        filename, // name of the file
+        type: mimeType, // MIME type
+        disposition: 'attachment'
+      })
+
+      // Log the attachment details for debugging
+      console.log('Attachment added:', { filename, mimeType })
+    } else {
+      console.error('Attachment format is incorrect')
+    }
   }
 
-  try {
-    await sgMail.send(msg)
-    return res.status(200).json({ success: true, message: 'Email sent successfully.' })
-  } catch (error) {
-    console.error('Error sending email:', error)
-    return res.status(500).json({ success: false, message: 'Failed to send email.' })
-  }
+  sgMail
+    .send(msg)
+    .then(() => {
+      res.status(200).send('Email sent')
+    })
+    .catch((error) => {
+      console.error('SendGrid error:', error)
+      res.status(500).send('Error sending email')
+    })
 })
 
 // Start server

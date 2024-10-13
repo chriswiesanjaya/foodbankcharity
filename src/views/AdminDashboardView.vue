@@ -229,18 +229,11 @@ const addAttachment = () => {
   const fileInput = document.createElement('input')
   fileInput.type = 'file'
   fileInput.accept = '.pdf, .png, .jpg, .jpeg'
-
   fileInput.onchange = (event) => {
     const selectedFile = event.target.files[0]
     if (selectedFile) {
       attachment.value = selectedFile
       attachmentName.value = selectedFile.name
-
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        attachmentContent.value = e.target.result.split(',')[1] // Get the base64 part
-      }
-      reader.readAsDataURL(selectedFile) // Read the file as a data URL
     }
   }
   fileInput.click()
@@ -253,33 +246,22 @@ const submitNewsletter = async () => {
 
   if (!errors.value.subject && !errors.value.message) {
     try {
-      console.log(...newsletter.value)
-      console.log(formData.value.subject)
-      console.log(formData.value.message)
-
-      const payload = {
-        to: newsletter.value,
-        from: 'chriswiesanjaya@gmail.com',
-        subject: formData.value.subject,
-        text: formData.value.message
-      }
-
-      // Conditionally add the attachment
-      if (attachment.value) {
-        console.log(attachment.value)
-        console.log(attachment.value.name)
-        console.log(attachment.value.type)
-        console.log(attachmentContent.value)
-
-        payload.attachment = {
-          name: attachment.value.name,
-          type: attachment.value.type,
-          content: attachmentContent.value
+      for (const recipient of newsletter.value) {
+        const payload = {
+          to: recipient,
+          from: 'chriswiesanjaya@gmail.com',
+          subject: formData.value.subject,
+          text: formData.value.message
         }
-      }
-      console.log(payload.to)
 
-      await sendEmail(payload)
+        // If an attachment is present, read it as base64
+        if (attachment.value) {
+          const base64data = await readFileAsDataURL(attachment.value)
+          payload.attachment = base64data // Send this to the server
+        }
+
+        await sendEmail(payload) // Wait for the email to send before moving to the next recipient
+      }
 
       submitNewsletterMessages.value.success = 'Newsletter has been sent successfully.'
       submitNewsletterMessages.value.failure = null
@@ -295,14 +277,22 @@ const submitNewsletter = async () => {
   }
 }
 
+// Function to read the file as a data URL
+const readFileAsDataURL = (file) => {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader()
+    fileReader.onloadend = () => resolve(fileReader.result)
+    fileReader.onerror = () => reject(new Error('Failed to read file'))
+    fileReader.readAsDataURL(file)
+  })
+}
+
 // Function to send email
 const sendEmail = async (payload) => {
-  await axios.post('http://localhost:3000/send-email', {
-    to: payload.to,
-    from: payload.from,
-    subject: payload.subject,
-    text: payload.text,
-    attachment: payload.attachment || []
+  await axios.post('http://localhost:3000/send-email', payload, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
   })
 }
 
