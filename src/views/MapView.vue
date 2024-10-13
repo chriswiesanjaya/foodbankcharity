@@ -31,14 +31,17 @@
     </div>
 
     <!-- Location Output -->
-    <div v-if="locationOutput" class="alert alert-info">
-      {{ locationOutput }}
-    </div>
-    <div v-if="errorMessage" class="alert alert-danger">
-      {{ errorMessage }}
-    </div>
-    <div v-if="distance !== null" class="alert alert-info">
-      Distance to {{ selectedCharity?.name }}: {{ distance }} km
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 offset-md-2">
+          <div v-if="locationOutput" class="alert alert-info">
+            {{ locationOutput }}
+          </div>
+          <div v-if="errorMessage" class="alert alert-danger">
+            {{ errorMessage }}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -123,9 +126,9 @@ function updateLocation() {
     )
 
     if (matchedLocation) {
-      locationOutput.value = `Charity Location: ${matchedLocation.name}`
-      errorMessage.value = ''
       distance.value = calculateDistance(userLocation.value, matchedLocation.coords)
+      locationOutput.value = `${selectedCharity.value.name} location: ${matchedLocation.name} (${distance.value} km away)`
+      errorMessage.value = ''
 
       // Clear existing markers and lines
       if (charityMarker) {
