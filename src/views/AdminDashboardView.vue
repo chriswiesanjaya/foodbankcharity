@@ -1,4 +1,5 @@
 <template>
+  <!-- User Table -->
   <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
@@ -8,6 +9,7 @@
     </div>
   </div>
 
+  <!-- Newsletter -->
   <div class="container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
@@ -62,16 +64,115 @@
       </div>
     </div>
   </div>
+
+  <!-- Charity Comparison Chart -->
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <h1 class="text-center">Charity Comparison Chart</h1>
+        <div class="row mb-3">
+          <label for="charity1" class="form-label">Charity 1</label>
+          <select
+            class="form-select"
+            id="charity1"
+            v-model="charityComparison.charity1"
+            @change="updateChart"
+            required
+          >
+            <option v-for="charity in charities" :key="charity.id" :value="charity.name">
+              {{ charity.name }}
+            </option>
+          </select>
+        </div>
+        <div class="row mb-3">
+          <label for="charity2" class="form-label">Charity 2</label>
+          <select
+            class="form-select"
+            id="charity2"
+            v-model="charityComparison.charity2"
+            @change="updateChart"
+            required
+          >
+            <option v-for="charity in charities" :key="charity.id" :value="charity.name">
+              {{ charity.name }}
+            </option>
+          </select>
+        </div>
+        <div class="row mb-3">
+          <label for="charity3" class="form-label">Charity 3</label>
+          <select
+            class="form-select"
+            id="charity3"
+            v-model="charityComparison.charity3"
+            @change="updateChart"
+            required
+          >
+            <option v-for="charity in charities" :key="charity.id" :value="charity.name">
+              {{ charity.name }}
+            </option>
+          </select>
+        </div>
+        <div class="row mb-3">
+          <label for="charity4" class="form-label">Charity 4</label>
+          <select
+            class="form-select"
+            id="charity4"
+            v-model="charityComparison.charity4"
+            @change="updateChart"
+            required
+          >
+            <option v-for="charity in charities" :key="charity.id" :value="charity.name">
+              {{ charity.name }}
+            </option>
+          </select>
+        </div>
+        <div class="row mb-3">
+          <label for="metric" class="form-label">Metric</label>
+          <select
+            class="form-select"
+            id="metric"
+            v-model="charityComparison.metric"
+            @change="updateChart"
+            required
+          >
+            <option value="donation">Donation (AUD)</option>
+            <option value="volunteer">Volunteer</option>
+          </select>
+        </div>
+
+        <!-- CharityChart Component -->
+        <CharityChart
+          :charities="charities"
+          :selectedCharities="[
+            charityComparison.charity1,
+            charityComparison.charity2,
+            charityComparison.charity3,
+            charityComparison.charity4
+          ]"
+          :metric="charityComparison.metric"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getFirestore, collection, getDocs } from 'firebase/firestore'
 import UserTable from '../components/UserTable.vue'
+import CharityChart from '../components/CharityChart.vue' // Import the CharityChart component
 import axios from 'axios'
 
 const db = getFirestore()
 const users = ref([])
+const charities = ref([])
+const charityComparison = ref({
+  charity1: '',
+  charity2: '',
+  charity3: '',
+  charity4: '',
+  metric: 'donation'
+})
 const newsletter = ref([])
 const attachment = ref(null)
 const attachmentName = ref('')
@@ -91,25 +192,38 @@ const submitNewsletterMessages = ref({
   failure: null
 })
 
+// Clear form
 const clearForm = () => {
-  formData.value = {
-    subject: '',
-    message: ''
-  }
+  formData.value.subject = ''
+  formData.value.message = ''
   attachment.value = null
   attachmentName.value = ''
 }
 
+// Fetch users
 const fetchUsers = async () => {
   const querySnapshot = await getDocs(collection(db, 'users'))
   users.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
 }
 
+// Fetch newsletter
 const fetchNewsletter = async () => {
   const querySnapshot = await getDocs(collection(db, 'newsletter'))
   newsletter.value = querySnapshot.docs.map((doc) => doc.data().email)
 }
 
+// Fetch charities
+const fetchCharities = async () => {
+  const querySnapshot = await getDocs(collection(db, 'charities'))
+  const charityList = querySnapshot.docs.map((doc) => {
+    return { id: doc.id, ...doc.data() }
+  })
+  charities.value = charityList.sort((a, b) => {
+    return a.name.localeCompare(b.name)
+  })
+}
+
+// Add attachment
 const addAttachment = () => {
   const fileInput = document.createElement('input')
   fileInput.type = 'file'
@@ -124,6 +238,7 @@ const addAttachment = () => {
   fileInput.click()
 }
 
+// Submit Newsletter
 const submitNewsletter = async () => {
   validateSubject(true)
   validateMessage(true)
@@ -210,9 +325,10 @@ const validateMessage = (blur) => {
   }
 }
 
-// Initial fetch of users
+// Initial fetch of users and charities
 onMounted(() => {
   fetchUsers()
+  fetchCharities()
   fetchNewsletter()
 })
 </script>
