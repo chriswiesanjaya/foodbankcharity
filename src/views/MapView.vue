@@ -1,52 +1,172 @@
 <template>
   <div class="container">
-    <div class="map-container">
-      <div id="map" class="map"></div>
+    <!-- Map Section -->
+    <div class="row">
+      <div class="col-12">
+        <div id="map" class="my-4" style="height: 500px"></div>
+      </div>
+    </div>
+
+    <!-- Charity Selector -->
+    <div class="row mb-3">
+      <label for="charitySelect" class="form-label">Select a Charity</label>
+      <select
+        id="charitySelect"
+        class="form-select"
+        v-model="selectedCharity"
+        @change="updateLocation"
+      >
+        <option disabled value="">Select a charity</option>
+        <option v-for="charity in charities" :key="charity.id" :value="charity">
+          {{ charity.name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Location Output -->
+    <div v-if="locationOutput" class="alert alert-info">
+      {{ locationOutput }}
+    </div>
+    <div v-if="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+    <div v-if="distance !== null" class="alert alert-info">
+      Distance to {{ selectedCharity?.name }}: {{ distance }} km
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-import mapboxgl from 'mapbox-gl'
-import 'mapbox-gl/dist/mapbox-gl.css'
-// import MapboxDirections from '@mapbox/mapbox-gl-directions' // Import MapboxDirections
-import '@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css' // Import Directions CSS
+import { ref, onMounted } from 'vue'
+import { getFirestore, collection, getDocs } from 'firebase/firestore'
+import L from 'leaflet'
 
-mapboxgl.accessToken =
-  'pk.eyJ1IjoiY2hyaXN3aWVzYW5qYXlhIiwiYSI6ImNtMjZveHY2NzE1cXAyam9qbjBva2pwd3cifQ.RJttnKpqMBMD8oHbmphCVg'
+const db = getFirestore()
+const charities = ref([])
+const selectedCharity = ref(null)
+const locationOutput = ref('')
+const errorMessage = ref('')
+const distance = ref(null)
+const userLocation = ref(null)
+const locations = [
+  { name: 'Melbourne', coords: [-37.8136, 144.9631] },
+  { name: 'Clayton', coords: [-37.9186, 145.134] },
+  { name: 'South Yarra', coords: [-37.8399, 144.9924] },
+  { name: 'Brunswick', coords: [-37.7674, 144.9631] },
+  { name: 'Southbank', coords: [-37.8201, 144.9644] },
+  { name: 'Springvale', coords: [-37.9337, 145.1436] }
+]
+
+let map = null
+let userMarker = null
+let charityMarker = null
+let line = null
 
 onMounted(() => {
-  const map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v12',
-    center: [-79.4512, 43.6568],
-    zoom: 13
-  })
-
-  // Initialize the directions control
-  const directions = new MapboxDirections({
-    accessToken: mapboxgl.accessToken
-  })
-
-  map.addControl(directions, 'top-left')
+  initializeMap()
+  getUserLocation()
+  fetchCharities()
 })
+
+function initializeMap() {
+  map = L.map('map').setView([-37.8136, 144.9631], 12)
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(map)
+}
+
+function getUserLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        userLocation.value = [position.coords.latitude, position.coords.longitude]
+        addUserMarker()
+      },
+      () => {
+        alert('Location access is denied. Please enable location services to use this feature.')
+        // Optionally provide further instructions
+      }
+    )
+  } else {
+    alert('Geolocation is not supported by this browser.')
+  }
+}
+
+function addUserMarker() {
+  if (userLocation.value) {
+    if (userMarker) {
+      map.removeLayer(userMarker)
+    }
+    userMarker = L.marker(userLocation.value).addTo(map).bindPopup('Your Location').openPopup()
+    map.setView(userLocation.value, 13)
+  }
+}
+
+function fetchCharities() {
+  getDocs(collection(db, 'charities')).then((querySnapshot) => {
+    charities.value = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+  })
+}
+
+function updateLocation() {
+  if (selectedCharity.value) {
+    const charityLocation = selectedCharity.value.location
+    const matchedLocation = locations.find(
+      (loc) => loc.name.toLowerCase() === charityLocation.toLowerCase()
+    )
+
+    if (matchedLocation) {
+      locationOutput.value = `Charity Location: ${matchedLocation.name}`
+      errorMessage.value = ''
+      distance.value = calculateDistance(userLocation.value, matchedLocation.coords)
+
+      // Clear existing markers and lines
+      if (charityMarker) {
+        map.removeLayer(charityMarker)
+      }
+      if (line) {
+        map.removeLayer(line)
+      }
+
+      // Add charity marker
+      charityMarker = L.marker(matchedLocation.coords)
+        .addTo(map)
+        .bindPopup(matchedLocation.name)
+        .openPopup()
+
+      // Draw a line between user location and charity location
+      line = L.polyline([userLocation.value, matchedLocation.coords], { color: 'blue' }).addTo(map)
+      map.setView(matchedLocation.coords, 13)
+    } else {
+      locationOutput.value = ''
+      errorMessage.value = 'Error: Charity location not found.'
+      distance.value = null
+    }
+  }
+}
+
+function calculateDistance(coords1, coords2) {
+  const R = 6371 // Radius of the Earth in km
+  const dLat = degreesToRadians(coords2[0] - coords1[0])
+  const dLon = degreesToRadians(coords2[1] - coords1[1])
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(degreesToRadians(coords1[0])) *
+      Math.cos(degreesToRadians(coords2[0])) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  return (R * c).toFixed(2) // Distance in km
+}
+
+function degreesToRadians(degrees) {
+  return degrees * (Math.PI / 180)
+}
 </script>
 
-<style>
-.container {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  max-width: 80vw;
-  margin: 0 auto;
-  padding: 20px;
-  border-radius: 10px;
-}
-.map-container {
+<style scoped>
+#map {
   width: 100%;
-  height: 500px; /* Set the height of the map */
-}
-.map {
-  width: 100%;
-  height: 100%;
+  height: 500px;
 }
 </style>
